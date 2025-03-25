@@ -1,0 +1,13 @@
+package com.cohort22.DTOS.request;
+
+import com.cohort22.data.models.Quiz;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class StudentRequest {
+    private String name;
+    private String email;
+    private List<Long> quizId;
+}
