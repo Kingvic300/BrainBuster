@@ -2,19 +2,18 @@ package com.cohort22.data.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-@Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class Teacher {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
+@Data
+public class Teacher extends User {
 
     @OneToMany
     private List<Quiz> quizzes;
+
+    @OneToOne
+    private GamePin pin;
 }

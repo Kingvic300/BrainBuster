@@ -1,6 +1,5 @@
 package com.cohort22.data.models;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +14,8 @@ public class GamePin {
     private String pin;
 
     @OneToOne
-    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
+
+    @ManyToOne
+    private Teacher teacher;
 }

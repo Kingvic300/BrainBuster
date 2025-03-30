@@ -1,4 +1,32 @@
 package com.cohort22.mappers;
 
+import com.cohort22.DTOS.request.GamePinRequest;
+import com.cohort22.DTOS.request.OptionsRequest;
+import com.cohort22.DTOS.response.GamePinResponse;
+import com.cohort22.DTOS.response.OptionsResponse;
+import com.cohort22.data.models.GamePin;
+import com.cohort22.data.models.Options;
+import com.cohort22.data.models.Question;
+
 public class OptionsMapper {
+    public static Options mapToOptions(OptionsRequest optionsRequest, Question question) {
+        Options options = new Options();
+        options.setText(optionsRequest.getText());
+        options.setQuestion(question);
+        options.setIsCorrect(optionsRequest.getIsCorrect());
+        return options;
+    }
+
+    public static OptionsRequest mapToOptionsRequest(Options options) {
+        OptionsRequest optionsRequest = new OptionsRequest();
+        optionsRequest.setText(options.getText());
+        optionsRequest.setIsCorrect(options.getIsCorrect());
+        return optionsRequest;
+    }
+    public static OptionsResponse mapToOptionsResponse(String message, Options options) {
+        OptionsResponse optionsResponse = new OptionsResponse();
+        optionsResponse.setMessage(message);
+        optionsResponse.setAnswerText(options.getText());
+        return optionsResponse;
+    }
 }

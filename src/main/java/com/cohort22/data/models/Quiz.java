@@ -15,10 +15,13 @@ public class Quiz {
 
     private String title;
 
-    @OneToMany
+    @OneToMany(mappedBy = "quiz")
     private List<Question> questions;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
-}
+
+    @ManyToOne
+    private Game> games;
+
+   }

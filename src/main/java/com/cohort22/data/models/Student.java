@@ -5,17 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
-@Data
 @Entity
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Data
+public class Student extends User{
 
-    private String name;
-    private String email;
-
-    @ManyToMany
-    private List<Quiz> quizzes;
-
+    @OneToMany
+    private List<Game> gamingSession;
+    private Long gameId;
+    private int score;
 }

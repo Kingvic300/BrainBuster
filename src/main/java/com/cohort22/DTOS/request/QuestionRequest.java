@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class QuestionRequest {
+    private Long id;
     private String questionText;
     private List<String> options;
     private int correctOptionIndex;

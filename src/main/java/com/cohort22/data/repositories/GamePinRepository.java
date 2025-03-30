@@ -1,9 +1,17 @@
 package com.cohort22.data.repositories;
 
 import com.cohort22.data.models.GamePin;
+import com.cohort22.data.models.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface GamePinRepository extends JpaRepository<GamePin, Integer> {
+public interface GamePinRepository extends JpaRepository<GamePin, Long> {
+    Optional<GamePin> findByPin(String gamePin);
+    boolean existsByQuiz(Quiz quiz);
+    Optional<GamePin> findByQuiz(Quiz quiz);
+
+    Optional<GamePin> findByQuizId(Long quizId);
 }

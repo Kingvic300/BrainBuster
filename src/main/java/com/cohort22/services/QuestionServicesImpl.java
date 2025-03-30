@@ -16,18 +16,23 @@ public class QuestionServicesImpl implements QuestionServices {
 
     @Override
     public List<Question> getAllQuestions() {
-        if (questionRepository.findAll().isEmpty()) {
-            throw new QuestionNotFoundException("Question Not Found");
-        }
-        return questionRepository.findAll();
+       if (questionRepository.findAll().isEmpty()) {
+           throw new QuestionNotFoundException("No questions found");
+       }
+       return questionRepository.findAll();
     }
 
     @Override
     public Question getQuestionById(Long id) {
-        if(questionRepository.findById(id).isPresent()) {
-            return questionRepository.findById(id).get();
-        }
+        try {
+            if (questionRepository.findById(id).isPresent()) {
+                return questionRepository.findById(id).get();
+            }
+            throw new QuestionNotFoundException("Question Not Found");
+
+        }catch (QuestionNotFoundException e) {
         throw new QuestionNotFoundException("Question Not Found");
+        }
     }
 
     @Override
@@ -44,7 +49,8 @@ public class QuestionServicesImpl implements QuestionServices {
     public void deleteQuestion(Long id) {
         if (questionRepository.findById(id).isPresent()) {
             questionRepository.deleteById(id);
+        }else {
+            throw new QuestionNotFoundException("Question Not Found");
         }
-        throw new QuestionNotFoundException("Question Not Found");
     }
 }

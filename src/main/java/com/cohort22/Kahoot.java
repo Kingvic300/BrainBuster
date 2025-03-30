@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PopQuizApp {
+public class Kahoot {
     public static void main(String[] args) {
-        SpringApplication.run(PopQuizApp.class, args);
+        SpringApplication.run(Kahoot.class, args);
     }
 }

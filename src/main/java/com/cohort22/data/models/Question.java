@@ -14,13 +14,14 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String text;
 
-    private String questionText;
+    @ManyToOne
+    private Quiz quiz;
 
     @OneToMany
     private List<Options> options;
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
+    private String answer;
+    private Long quidId;
 }

@@ -12,11 +12,10 @@ public class Options {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String answer;
     private String text;
+    private Boolean IsCorrect;
 
     @ManyToOne
-    @JoinColumn(name = "question_id")
     private Question question;
 
 

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface QuestionServices {
     List<Question> getAllQuestions();
     Question getQuestionById(Long id);
