@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "app_user")
 public class User {
 
     @Id
@@ -17,6 +16,6 @@ public class User {
     private String password;
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private Roles role;
-
 }

@@ -30,6 +30,7 @@ public class GameServicesImplTest {
     @Test
     public void testThatAGameCanBeCreated(){
         Quiz quiz = new Quiz();
+        quiz.setId(12L);
         quiz.setTitle("Sample Quiz");
         quiz = quizRepository.save(quiz);
 
@@ -43,6 +44,7 @@ public class GameServicesImplTest {
         assertEquals(GameStatus.CREATED.toString(), response.getStatus());
 
         Game game = gameRepository.findAll().getFirst();
+        game.setId(12L);
         assertNotNull(game);
         assertEquals(GameStatus.CREATED, game.getStatus());
         assertNotNull(game.getGamePin());
@@ -51,35 +53,17 @@ public class GameServicesImplTest {
     public void testThatGameCreatedThrowsQuizIsNotFoundException(){
         Quiz quiz = new Quiz();
         quiz.setTitle("Sample Quiz");
-        quiz = quizRepository.save(quiz);
+        quizRepository.save(quiz);
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setQuizId(23L);
 
         assertThrows(QuizNotFoundException.class, () -> gameServices.createGame(gameRequest));
     }
-
-//    @Test
-//    public void testThatStudentCanJoinAnExistingGame(){
-//        Quiz quiz = new Quiz();
-//        quiz.setTitle("Sample Quiz");
-//        quiz = quizRepository.save(quiz);
-//
-//        GameRequest gameRequest = new GameRequest();
-//        gameRequest.setQuizId(quiz.getId());
-//
-//        GameResponse createGame = gameServices.createGame(gameRequest);
-//
-//        GameResponse joinGame = gameServices.joinGame(gameRequest);
-//        assertNotNull(joinGame);
-//
+//    @AfterEach
+//    public void tearDown() {
+//        quizRepository.deleteAll();
+//        gameRepository.deleteAll();
 //    }
-
-
-    @AfterEach
-    public void cleanUp() {
-        gameRepository.deleteAll();
-        quizRepository.deleteAll();
-    }
 
 }

@@ -14,16 +14,26 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    private List<Student> student;
+    @OneToOne(mappedBy = "game")
+    private GamePin gamePin;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToOne
-    private GamePin gamePin;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
     @Enumerated(EnumType.STRING)
     private GameStatus status;
+
+    @ManyToMany
+    @JoinTable(
+            name = "game_students",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<Student> students;
 
 }

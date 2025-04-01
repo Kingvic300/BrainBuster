@@ -5,10 +5,10 @@ import lombok.Data;
 
 import java.util.List;
 
+
 @Entity
 @Data
 public class Quiz {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,9 +19,9 @@ public class Quiz {
     private List<Question> questions;
 
     @ManyToOne
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @ManyToOne
-    private Game> games;
-
-   }
+    @OneToMany(mappedBy = "quiz")
+    private List<Game> games;
+}

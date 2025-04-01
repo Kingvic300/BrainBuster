@@ -6,6 +6,5 @@ import lombok.Data;
 @Data
 public class GamePinResponse {
     private String gamePin;
-    private Quiz quiz;
     private String message;
 }

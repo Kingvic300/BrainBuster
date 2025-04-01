@@ -7,7 +7,7 @@ import com.cohort22.DTOS.response.TeacherResponse;
 import com.cohort22.data.models.GamePin;
 import com.cohort22.data.models.Teacher;
 
-public class TeacherMapper {
+public class TeacherMapper extends UserMapper {
 
     public static Teacher mapToTeacher(TeacherRequest teacherRequest) {
         Teacher teacher = new Teacher();

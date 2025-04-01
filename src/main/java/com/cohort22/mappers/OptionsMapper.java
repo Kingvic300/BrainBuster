@@ -16,13 +16,6 @@ public class OptionsMapper {
         options.setIsCorrect(optionsRequest.getIsCorrect());
         return options;
     }
-
-    public static OptionsRequest mapToOptionsRequest(Options options) {
-        OptionsRequest optionsRequest = new OptionsRequest();
-        optionsRequest.setText(options.getText());
-        optionsRequest.setIsCorrect(options.getIsCorrect());
-        return optionsRequest;
-    }
     public static OptionsResponse mapToOptionsResponse(String message, Options options) {
         OptionsResponse optionsResponse = new OptionsResponse();
         optionsResponse.setMessage(message);

@@ -1,13 +1,14 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GamePinRequest;
+import com.cohort22.DTOS.request.GameRequest;
 import com.cohort22.DTOS.response.GamePinResponse;
+import com.cohort22.data.models.Game;
 import com.cohort22.data.models.GamePin;
-import com.cohort22.data.models.Quiz;
 import com.cohort22.data.repositories.GamePinRepository;
-import com.cohort22.data.repositories.QuizRepository;
+import com.cohort22.data.repositories.GameRepository;
+import com.cohort22.exceptions.GameNotFoundException;
+import com.cohort22.exceptions.GamePinAlreadyExistsException;
 import com.cohort22.exceptions.GamePinNotFoundException;
-import com.cohort22.exceptions.QuizNotFoundException;
 import com.cohort22.mappers.GamePinMapper;
 import com.cohort22.utils.GamePinGeneration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,37 +20,42 @@ import java.util.Optional;
 public class GamePinServicesImpl implements GamePinServices {
 
     @Autowired
-    private QuizRepository quizRepository;
-
-    @Autowired
     private GamePinRepository gamePinRepository;
+    @Autowired
+    private GameRepository gameRepository;
 
     @Override
-    public GamePinResponse generateGamePin(Long quizId) {
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
+    public GamePinResponse generateGamePin(Long gameId) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new GameNotFoundException("Game Not Found"));
 
         String generatedGamePin = GamePinGeneration.gamePinGenerator();
 
         if (gamePinRepository.findByPin(generatedGamePin).isPresent()) {
-            throw new RuntimeException("Generated game pin already exists, try again.");
+            throw new GamePinAlreadyExistsException("game pin already exists, try again.");
         }
 
         GamePin gamePin = new GamePin();
         gamePin.setPin(generatedGamePin);
-        gamePin.setQuiz(quiz);
+        gamePin.setGame(game);
 
         gamePinRepository.save(gamePin);
         return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin);
     }
 
     @Override
-    public GamePinResponse validateGamePin(String gamePin) {
-        Optional<GamePin> validateGamePin = gamePinRepository.findByPin(gamePin);
-        if (validateGamePin.isEmpty()) {
-            throw new GamePinNotFoundException("Game pin not found");
+    public GamePinResponse validateGamePin(GameRequest gameRequest) {
+        Optional<GamePin> validatedGamePin = gamePinRepository.findByPin(gameRequest.getGamePin());
+
+        if (validatedGamePin.isEmpty()) {
+            throw new GamePinNotFoundException("Invalid game pin");
         }
-        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully",validateGamePin.get());
+        Optional<Game> game = gameRepository.findById(validatedGamePin.get().getGame().getId());
+
+        if (game.isEmpty()) {
+            throw new GameNotFoundException("Game not found for the provided pin");
+        }
+        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully",validatedGamePin.get());
     }
 
 }

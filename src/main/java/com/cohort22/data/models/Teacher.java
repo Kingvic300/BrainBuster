@@ -6,14 +6,15 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 public class Teacher extends User {
-
-    @OneToMany
+    @OneToMany(mappedBy = "teacher")
     private List<Quiz> quizzes;
 
-    @OneToOne
-    private GamePin pin;
+    @OneToMany(mappedBy = "teacher")
+    private List<Game> games;
+
 }

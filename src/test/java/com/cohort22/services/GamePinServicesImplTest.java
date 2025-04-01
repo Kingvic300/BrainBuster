@@ -1,32 +1,81 @@
 package com.cohort22.services;
 
 import com.cohort22.DTOS.request.GamePinRequest;
+import com.cohort22.DTOS.request.GameRequest;
+import com.cohort22.DTOS.response.GamePinResponse;
+import com.cohort22.data.enums.GameStatus;
+import com.cohort22.data.models.Game;
+import com.cohort22.data.models.GamePin;
 import com.cohort22.data.models.Quiz;
+import com.cohort22.data.repositories.GamePinRepository;
+import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.QuizRepository;
+import com.cohort22.exceptions.GameNotFoundException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class GamePinServicesImplTest {
     @Autowired
     private GamePinServices gamePinServices;
     @Autowired
-    private QuizRepository quizRepository;
+    private GameRepository gameRepository;
 
+    @Autowired
+    private GamePinRepository gamePinRepository;
+
+    private Game game;
+
+    @BeforeEach
+    public void setUp() {
+        game = new Game();
+        game.setId(12L);
+        gameRepository.save(game);
+
+
+    }
     @Test
-    public void generateGamePinTest() {
-        Quiz quiz = new Quiz();
-        quiz.setTitle("Science");
-        quizRepository.save(quiz);
-       GamePinRequest gamePinRequest = new GamePinRequest();
-       String gamePin = String.valueOf(gamePinServices.generateGamePin(quiz.getId()));
-       gamePinRequest.setGamePin(gamePin);
-       gamePinRequest.setQuiz(quiz);
-       assertEquals(gamePin, gamePinRequest.getGamePin());
-       assertEquals("Science", gamePinRequest.getQuiz().getTitle());
+    public void testThatGamePinHasBeenGeneratedSuccessfully() {
+        GamePinResponse generatedGamePin = gamePinServices.generateGamePin(game.getId());
+        GamePin savedGamePin = gamePinRepository.findByGame(game);
+        assertNotNull(savedGamePin);
+        assertNotNull(savedGamePin.getPin());
+        assertNotNull(generatedGamePin);
+        assertEquals("Game pin generated successfully", generatedGamePin.getMessage());
+    }
+    @Test
+    public void testThatGamePinThrowsAnExceptionIfGameNotFound() {
+        assertThrows(GameNotFoundException.class, () -> gamePinServices.generateGamePin(12L));
+    }
+    @Test
+    public void testThatGamePinCanBeValidatedSuccessfully(){
+        GamePinResponse generatedGamePin = gamePinServices.generateGamePin(game.getId());
+        GamePin savedGamePin = gamePinRepository.findByGame(game);
+
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setGameId(game.getId());
+        gameRequest.setGamePin(savedGamePin.getPin());
+
+        GamePinResponse validateGamePin = gamePinServices.validateGamePin(gameRequest);
+        assertNotNull(generatedGamePin);
+        assertEquals("Game pin generated successfully", generatedGamePin.getMessage());
+        assertNotNull(savedGamePin);
+        assertNotNull(savedGamePin.getPin());
+        assertNotNull(validateGamePin);
+        assertEquals("Game pin validated successfully", validateGamePin.getMessage());
+    }
+
+    @AfterEach
+    public void tearDown() {
+        gamePinRepository.deleteAll();
+        gameRepository.deleteAll();
     }
 
 }

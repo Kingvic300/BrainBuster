@@ -3,20 +3,18 @@ package com.cohort22.mappers;
 import com.cohort22.DTOS.request.GameRequest;
 import com.cohort22.DTOS.response.GameResponse;
 import com.cohort22.data.enums.GameStatus;
-import com.cohort22.data.models.Game;
-import com.cohort22.data.models.GamePin;
-import com.cohort22.data.models.Quiz;
-import com.cohort22.data.models.Student;
+import com.cohort22.data.models.*;
 
 import java.util.List;
 
 public class GameMapper {
-    public static Game mapToGame(GameRequest gameRequest, Quiz quiz, List<Student> student, GamePin gamePin) {
+    public static Game mapToGame(GameRequest gameRequest, Quiz quiz, List<Student> student, GamePin gamePin, Teacher teacher) {
         Game game = new Game();
         game.setQuiz(quiz);
         game.setGamePin(gamePin);
-        game.setStudent(student);
+        game.setStudents(student);
         game.setStatus(gameRequest.getGameStatus());
+        game.setTeacher(teacher);
         return game;
     }
     public static GameResponse mapToGameResponse(String message, GameStatus gameStatus) {

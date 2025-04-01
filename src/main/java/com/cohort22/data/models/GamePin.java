@@ -6,7 +6,6 @@ import lombok.Data;
 @Entity
 @Data
 public class GamePin {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,8 +13,6 @@ public class GamePin {
     private String pin;
 
     @OneToOne
-    private Quiz quiz;
-
-    @ManyToOne
-    private Teacher teacher;
+    @JoinColumn(name = "game_id", nullable = false, unique = true)
+    private Game game;
 }

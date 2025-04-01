@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class QuizRequest {
-    private String quizName;
-    private int numberOfQuestions;
+    private String title;
+    private Long questionsId;
     private Long teacherId;
-    private Long id;
+    private Long gamesId;
 
 }
