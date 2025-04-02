@@ -24,4 +24,23 @@ public class Quiz {
 
     @OneToOne(mappedBy = "quiz")
     private Game games;
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Quiz quiz = (Quiz) obj;
+        return id != null && id.equals(quiz.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
+
 }

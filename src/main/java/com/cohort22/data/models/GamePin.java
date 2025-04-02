@@ -15,6 +15,6 @@ public class GamePin {
     private String pin;
 
     @ManyToOne
-    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "game", nullable = false)
     private Game game;
 }

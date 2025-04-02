@@ -7,6 +7,7 @@ import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.Game;
 import com.cohort22.data.models.GamePin;
 import com.cohort22.data.models.Quiz;
+import com.cohort22.data.models.Teacher;
 import com.cohort22.data.repositories.GamePinRepository;
 import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.QuizRepository;
@@ -32,12 +33,25 @@ public class GamePinServicesImplTest {
     private GamePinRepository gamePinRepository;
 
     private Game game;
+    private Quiz quiz;
+    private Teacher teacher;
+
+    @Autowired
+    private QuizRepository quizRepository;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() {quiz = new Quiz();
+        quiz.setId(1L);
+        quiz.setTitle("science");
+        quizRepository.save(quiz);
+
+
         game = new Game();
         game.setId(12L);
+        game.setQuiz(quiz);
         gameRepository.save(game);
+
+
 
 
     }

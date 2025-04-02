@@ -8,6 +8,7 @@ import com.cohort22.data.models.*;
 import com.cohort22.data.repositories.*;
 import com.cohort22.exceptions.*;
 import com.cohort22.mappers.GameMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +40,26 @@ public class GameServicesImpl implements GameServices {
         }
 
         Game game = new Game();
+
+        GamePin gamePin = new GamePin();
+        String generatedPin = String.valueOf(gamePinServices.generateGamePin(game.getId()));
+
+        if(generatedPin == null){
+            throw new GamePinNotFoundException("Game pin was not generated");
+        }
+        gamePin.setPin(generatedPin);
+
+
+        Set<GamePin> pin = new HashSet<>();
+        pin.add(gamePin);
+
         game.setQuiz(quiz.get());
         game.setStatus(GameStatus.CREATED);
-        game = gameRepository.save(game);
-
+        game.setGamePin(pin);
         gameRepository.save(game);
+
+        gamePin.setGame(game);
+        gamePinRepository.save(gamePin);
 
         return GameMapper.mapToGameResponse("Game Created Successfully", game.getStatus());
     }
@@ -65,20 +81,23 @@ public class GameServicesImpl implements GameServices {
 
         if (!game.getStudents().contains(student)) {
             game.getStudents().add(student);
+            gameRepository.save(game);
         }
 
-        gameRepository.save(game);
 
         return GameMapper.mapToGameResponse("Player Joined Successfully", game.getStatus());
     }
 
     @Override
     public GameResponse startGame(GameRequest gameRequest) {
+        gamePinServices.validateGamePin(gameRequest);
+
         Optional<Game> existingGame = gameRepository.findById(gameRequest.getGameId());
         if (existingGame.isEmpty()) {
             throw new GameNotFoundException("No game found");
         }
         Game game = existingGame.get();
+
 
         Optional<GamePin> existingPin = gamePinRepository.findByGameId(game.getId());
 
@@ -86,20 +105,13 @@ public class GameServicesImpl implements GameServices {
             throw new GamePinAlreadyExistsException("A pin already exists for this game.");
         }
 
-        GamePin gamePin = new GamePin();
-        gamePin.setPin(String.valueOf(gamePinServices.generateGamePin(game.getId())));
-        gamePin.setGame(game);
-        gamePinRepository.save(gamePin);
 
-        Set<GamePin> pin = new HashSet<>();
-        pin.add(gamePin);
         if (game.getQuiz() == null) {
             throw new QuizNotFoundException("No quiz Found for this game");
         }
         if (game.getStudents().isEmpty()) {
             throw new StudentNotFoundException("No students found for this game");
         }
-        game.setGamePin(pin);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
 
