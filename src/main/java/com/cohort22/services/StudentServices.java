@@ -9,7 +9,10 @@ public interface StudentServices {
     StudentResponse addNewStudent(Student student);
     StudentResponse updateStudent(StudentRequest studentRequest);
     void deleteStudent(StudentRequest studentRequest);
-    StudentResponse getStudentById(StudentRequest studentRequest);
+
+    StudentResponse getStudentByName(StudentRequest studentRequest);
+
+    //    StudentResponse getStudentById(StudentRequest studentRequest);
     StudentResponse findStudentInGameById(StudentRequest studentRequest);
 
 }

@@ -9,12 +9,13 @@ import java.util.List;
 
 public interface QuizServices {
     QuizResponse generateQuiz(QuizRequest quizRequest);
-    QuizResponse getQuizById(QuizRequest quizRequest);
+//    QuizResponse getQuizById(QuizRequest quizRequest);
     QuizResponse updateQuiz(QuizRequest quizRequest);
 
     QuizResponse deleteQuiz(QuizRequest quizRequest);
 
     //    QuizResponse deleteQuiz(QuizRequest quizRequest);
-    List<QuizResponse> getQuizzesByTeacher(TeacherRequest teacherRequest);
+//    List<QuizResponse> getQuizzesByTeacher(TeacherRequest teacherRequest);
 
+    List<QuizResponse> getQuizzesByTeacher(QuizRequest quizRequest);
 }

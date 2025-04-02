@@ -9,5 +9,5 @@ public interface TeacherServices {
     TeacherResponse createTeacher(Teacher teacher);
     TeacherResponse updateTeacher(TeacherRequest teacherRequest);
     void deleteTeacher(TeacherRequest teacherRequest);
-    TeacherResponse getTeacherById(TeacherRequest teacherRequest);
+    TeacherResponse getTeacherByName(TeacherRequest teacherRequest);
 }

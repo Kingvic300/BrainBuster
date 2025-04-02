@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -14,11 +15,12 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "game")
-    private GamePin gamePin;
+    @OneToMany
+    @JoinColumn(name = "gamePin_id")
+    private Set<GamePin> gamePin;
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_id")
+    @OneToOne
+    @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 
     @ManyToOne
@@ -28,12 +30,11 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
-    @ManyToMany
-    @JoinTable(
-            name = "game_students",
-            joinColumns = @JoinColumn(name = "game_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
+
+    @OneToMany(mappedBy = "games")
     private List<Student> students;
 
 }
+
+
+

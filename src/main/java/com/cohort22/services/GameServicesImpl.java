@@ -11,9 +11,7 @@ import com.cohort22.mappers.GameMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GameServicesImpl implements GameServices {
@@ -32,84 +30,82 @@ public class GameServicesImpl implements GameServices {
 
     @Autowired
     private GamePinRepository gamePinRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
-
 
     @Override
     public GameResponse createGame(GameRequest gameRequest) {
         Optional<Quiz> quiz = quizRepository.findById(gameRequest.getQuizId());
-        if (quiz.isEmpty()){
+        if (quiz.isEmpty()) {
             throw new QuizNotFoundException("Quiz not found");
         }
+
         Game game = new Game();
         game.setQuiz(quiz.get());
         game.setStatus(GameStatus.CREATED);
+        game = gameRepository.save(game);
+
         gameRepository.save(game);
 
-        GamePin gamePin = new GamePin();
-        gamePin.setPin(String.valueOf(gamePinServices.generateGamePin(game.getId())));
-
-        game.setGamePin(gamePin);
-        gamePin.setGame(game);
-        gamePinRepository.save(gamePin);
-        gameRepository.save(game);
         return GameMapper.mapToGameResponse("Game Created Successfully", game.getStatus());
     }
 
+
     @Override
     public GameResponse joinGame(GameRequest gameRequest) {
-        Optional<Teacher> existingTeacher = teacherRepository.findById(gameRequest.getTeacherId());
-        if (existingTeacher.isEmpty()){
-            throw new TeacherNotFoundException("Teacher not found");
-        }
-        Teacher teacher = existingTeacher.get();
-        Optional<Game> existingGame = gameRepository.findById(gameRequest.getGameId());
-        if (existingGame.isEmpty()){
-            throw new GameNotFoundException("Game not found");
-        }
-        Game game = existingGame.get();
-        GamePinResponse validatedGamePin = gamePinServices.validateGamePin(gameRequest);
-        GamePin gamePin = new GamePin();
-        gamePin.setPin(validatedGamePin.getGamePin());
+        Game game = gameRepository.findById(gameRequest.getGameId())
+                .orElseThrow(() -> new GameNotFoundException("Game not found"));
 
-        Optional<Student> existingStudents = studentRepository.findById(gameRequest.getStudentsId());
-        if (existingStudents.isEmpty()){
-            throw new StudentNotFoundException("Student not found");
+        gamePinServices.validateGamePin(gameRequest);
+
+        Student student = studentRepository.findById(gameRequest.getStudentsId())
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+
+        if (game.getStudents() == null) {
+            game.setStudents(new ArrayList<>());
         }
-        Student students = existingStudents.get();
-        Optional<Quiz> existingQuiz = quizRepository.findById(gameRequest.getQuizId());
-        if (existingQuiz.isEmpty()){
-            throw new QuizNotFoundException("Quiz not found");
+
+        if (!game.getStudents().contains(student)) {
+            game.getStudents().add(student);
         }
-        Quiz quiz = existingQuiz.get();
-        game = GameMapper.mapToGame(gameRequest, quiz,List.of(students),gamePin,teacher);
+
         gameRepository.save(game);
+
         return GameMapper.mapToGameResponse("Player Joined Successfully", game.getStatus());
     }
+
     @Override
     public GameResponse startGame(GameRequest gameRequest) {
-        GamePinResponse ValidateGamePin = gamePinServices.validateGamePin(gameRequest);
-
         Optional<Game> existingGame = gameRepository.findById(gameRequest.getGameId());
         if (existingGame.isEmpty()) {
-            throw new QuizNotFoundException("No game found for the given pin");
+            throw new GameNotFoundException("No game found");
         }
         Game game = existingGame.get();
 
+        Optional<GamePin> existingPin = gamePinRepository.findByGameId(game.getId());
+
+        if (existingPin.isPresent()) {
+            throw new GamePinAlreadyExistsException("A pin already exists for this game.");
+        }
+
+        GamePin gamePin = new GamePin();
+        gamePin.setPin(String.valueOf(gamePinServices.generateGamePin(game.getId())));
+        gamePin.setGame(game);
+        gamePinRepository.save(gamePin);
+
+        Set<GamePin> pin = new HashSet<>();
+        pin.add(gamePin);
         if (game.getQuiz() == null) {
             throw new QuizNotFoundException("No quiz Found for this game");
         }
         if (game.getStudents().isEmpty()) {
-            throw new StudentNotFoundException("NO student found for this game");
+            throw new StudentNotFoundException("No students found for this game");
         }
+        game.setGamePin(pin);
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
 
         return GameMapper.mapToGameResponse("Game Started Successfully", game.getStatus());
     }
+
 
     @Override
     public GameResponse submitAnswer(GameRequest gameRequest) {
@@ -195,7 +191,7 @@ public class GameServicesImpl implements GameServices {
 
         return gameResponses;
     }
-    public boolean correctAnswer(Long quizId, String answer) {
+    private boolean correctAnswer(Long quizId, String answer) {
         Optional<Quiz> quiz = quizRepository.findById(quizId);
         if (quiz.isEmpty()) {
             throw new QuizNotFoundException("Quiz not found");

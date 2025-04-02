@@ -14,7 +14,7 @@ public class Options {
     private Boolean isCorrect;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 }
 

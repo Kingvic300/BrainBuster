@@ -12,6 +12,7 @@ public interface UserServices {
     UserResponse createUser(User user);
     void deleteUser(UserRequest userRequest);
     UserResponse getUserById(UserRequest userRequest);
-    StudentResponse getStudentById(StudentRequest studentRequest);
-    TeacherResponse getTeacherById(TeacherRequest teacherRequest);
+    StudentResponse getStudentByName(StudentRequest studentRequest);
+
+    TeacherResponse getTeacherByName(TeacherRequest teacherRequest);
 }

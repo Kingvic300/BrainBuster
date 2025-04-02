@@ -22,6 +22,6 @@ public class Quiz {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @OneToMany(mappedBy = "quiz")
-    private List<Game> games;
+    @OneToOne(mappedBy = "quiz")
+    private Game games;
 }

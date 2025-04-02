@@ -31,17 +31,24 @@ public class GamePinServicesImpl implements GamePinServices {
 
         String generatedGamePin = GamePinGeneration.gamePinGenerator();
 
-        if (gamePinRepository.findByPin(generatedGamePin).isPresent()) {
-            throw new GamePinAlreadyExistsException("game pin already exists, try again.");
+        int retries = 3;
+        while (gamePinRepository.findByPin(generatedGamePin).isPresent() && retries > 0) {
+            generatedGamePin = GamePinGeneration.gamePinGenerator();
+            retries--;
+        }
+
+        if (retries == 0) {
+            throw new GamePinAlreadyExistsException("Game pin already exists.");
         }
 
         GamePin gamePin = new GamePin();
         gamePin.setPin(generatedGamePin);
         gamePin.setGame(game);
-
         gamePinRepository.save(gamePin);
+
         return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin);
     }
+
 
     @Override
     public GamePinResponse validateGamePin(GameRequest gameRequest) {

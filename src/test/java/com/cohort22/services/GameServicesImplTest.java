@@ -27,12 +27,14 @@ public class GameServicesImplTest {
     @Autowired
     private QuizRepository quizRepository;
 
+    @Autowired
+    private GamePinRepository gamePinRepository;
+
     @Test
     public void testThatAGameCanBeCreated(){
         Quiz quiz = new Quiz();
-        quiz.setId(12L);
         quiz.setTitle("Sample Quiz");
-        quiz = quizRepository.save(quiz);
+        quizRepository.save(quiz);
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setQuizId(quiz.getId());
@@ -44,10 +46,8 @@ public class GameServicesImplTest {
         assertEquals(GameStatus.CREATED.toString(), response.getStatus());
 
         Game game = gameRepository.findAll().getFirst();
-        game.setId(12L);
         assertNotNull(game);
         assertEquals(GameStatus.CREATED, game.getStatus());
-        assertNotNull(game.getGamePin());
     }
     @Test
     public void testThatGameCreatedThrowsQuizIsNotFoundException(){
@@ -60,10 +60,30 @@ public class GameServicesImplTest {
 
         assertThrows(QuizNotFoundException.class, () -> gameServices.createGame(gameRequest));
     }
-//    @AfterEach
-//    public void tearDown() {
-//        quizRepository.deleteAll();
-//        gameRepository.deleteAll();
-//    }
+    @Test
+    public void testStartGame() {
+        Quiz quiz = new Quiz();
+        quiz.setTitle("Test Quiz");
+        quizRepository.save(quiz);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.CREATED);
+        gameRepository.save(game);
+
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setGameId(game.getId());
+
+        GameResponse response = gameServices.startGame(gameRequest);
+
+        assertEquals("Game Started Successfully", response.getMessage());
+        assertEquals(GameStatus.IN_PROGRESS, game.getStatus());
+    }
+    @AfterEach
+    public void tearDown() {
+        gamePinRepository.deleteAll();
+        gameRepository.deleteAll();
+        quizRepository.deleteAll();
+    }
 
 }

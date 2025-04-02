@@ -5,14 +5,16 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "gamepin")
 public class GamePin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String pin;
 
-    @OneToOne
-    @JoinColumn(name = "game_id", nullable = false, unique = true)
+    @ManyToOne
+    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false)
     private Game game;
 }

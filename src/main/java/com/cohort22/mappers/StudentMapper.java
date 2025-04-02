@@ -8,7 +8,7 @@ import com.cohort22.data.models.Student;
 import java.util.List;
 
 public class StudentMapper extends UserMapper {
-    public static Student mapToStudent(StudentRequest studentRequest, List<Game> games) {
+    public static Student mapToStudent(StudentRequest studentRequest, Game games) {
         Student student = new Student();
         student.setUsername(studentRequest.getUsername());
         student.setEmail(studentRequest.getEmail());

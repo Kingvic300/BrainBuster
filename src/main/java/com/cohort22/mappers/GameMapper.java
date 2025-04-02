@@ -6,9 +6,10 @@ import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.*;
 
 import java.util.List;
+import java.util.Set;
 
 public class GameMapper {
-    public static Game mapToGame(GameRequest gameRequest, Quiz quiz, List<Student> student, GamePin gamePin, Teacher teacher) {
+    public static Game mapToGame(GameRequest gameRequest, Quiz quiz, List<Student> student, Set<GamePin> gamePin, Teacher teacher) {
         Game game = new Game();
         game.setQuiz(quiz);
         game.setGamePin(gamePin);

@@ -12,8 +12,10 @@ import java.util.List;
 @Data
 public class Student extends User{
 
-    @ManyToMany(mappedBy = "students")
-    private List<Game> games;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game games;
     private int score;
 
 }

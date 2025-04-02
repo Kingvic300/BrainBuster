@@ -6,10 +6,11 @@ import com.cohort22.data.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class QuizMapper {
-    public static Quiz mapToQuiz(QuizRequest quizRequest, List<Question> questions, Teacher teacher, List<Game> games) {
+    public static Quiz mapToQuiz(QuizRequest quizRequest, List<Question> questions, Teacher teacher, Game games) {
         Quiz quiz = new Quiz();
         quiz.setQuestions(questions);
         quiz.setTeacher(teacher);

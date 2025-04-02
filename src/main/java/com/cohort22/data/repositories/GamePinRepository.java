@@ -13,4 +13,5 @@ public interface GamePinRepository extends JpaRepository<GamePin, Long> {
     Optional<GamePin> findByPin(String gamePin);
 
     GamePin findByGame(Game game);
+    Optional<GamePin> findByGameId(Long id);
 }
