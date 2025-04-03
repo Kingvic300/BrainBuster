@@ -23,7 +23,7 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     @Override
-    public Question getQuestionById(Long id) {
+    public Question getQuestionById(String id) {
         try {
             if (questionRepository.findById(id).isPresent()) {
                 return questionRepository.findById(id).get();
@@ -46,7 +46,7 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     @Override
-    public void deleteQuestion(Long id) {
+    public void deleteQuestion(String id) {
         if (questionRepository.findById(id).isPresent()) {
             questionRepository.deleteById(id);
         }else {

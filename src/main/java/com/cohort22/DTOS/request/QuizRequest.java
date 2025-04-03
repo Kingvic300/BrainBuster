@@ -2,11 +2,14 @@ package com.cohort22.DTOS.request;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class QuizRequest {
+    private String id;
     private String title;
-    private Long questionsId;
-    private Long teacherId;
-    private Long gamesId;
+    private List<String> questionsId;
+    private String teacherId;
+    private String gamesId;
 
 }

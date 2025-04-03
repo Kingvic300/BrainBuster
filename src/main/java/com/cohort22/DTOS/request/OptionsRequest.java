@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class OptionsRequest {
-    private String text;
+    private String id;
+    private String newText;
     private Boolean IsCorrect;
     private String questionId;
 }

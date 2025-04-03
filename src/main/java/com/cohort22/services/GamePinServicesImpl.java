@@ -14,8 +14,6 @@ import com.cohort22.utils.GamePinGeneration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class GamePinServicesImpl implements GamePinServices {
 
@@ -25,14 +23,15 @@ public class GamePinServicesImpl implements GamePinServices {
     private GameRepository gameRepository;
 
     @Override
-    public GamePinResponse generateGamePin(Long gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new GameNotFoundException("Game Not Found"));
+    public GamePinResponse generateGamePin(String gameId) {
+        if (!gameRepository.existsById(gameId)) {
+            throw new GameNotFoundException("Game Not Found");
+        }
 
         String generatedGamePin = GamePinGeneration.gamePinGenerator();
 
         int retries = 3;
-        while (gamePinRepository.findByPin(generatedGamePin).isPresent() && retries > 0) {
+        while (gamePinRepository.existsByPin(generatedGamePin) && retries > 0) {
             generatedGamePin = GamePinGeneration.gamePinGenerator();
             retries--;
         }
@@ -43,26 +42,21 @@ public class GamePinServicesImpl implements GamePinServices {
 
         GamePin gamePin = new GamePin();
         gamePin.setPin(generatedGamePin);
-        gamePin.setGame(game);
+        gamePin.setGameId(gameId);
         gamePinRepository.save(gamePin);
 
         return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin);
     }
 
-
     @Override
     public GamePinResponse validateGamePin(GameRequest gameRequest) {
-        Optional<GamePin> validatedGamePin = gamePinRepository.findByPin(gameRequest.getGamePin());
+        GamePin gamePin = gamePinRepository.findByPin(gameRequest.getGamePin())
+                .orElseThrow(() -> new GamePinNotFoundException("Invalid game pin"));
 
-        if (validatedGamePin.isEmpty()) {
-            throw new GamePinNotFoundException("Invalid game pin");
-        }
-        Optional<Game> game = gameRepository.findById(validatedGamePin.get().getGame().getId());
+        Game game = gameRepository.findById(gamePin.getGameId())
+                .orElseThrow(() -> new GameNotFoundException("Game not found for the given pin"));
 
-        if (game.isEmpty()) {
-            throw new GameNotFoundException("Game not found for the provided pin");
-        }
-        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully",validatedGamePin.get());
+
+        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully", gamePin);
     }
-
 }

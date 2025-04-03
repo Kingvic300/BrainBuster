@@ -11,8 +11,8 @@ import com.cohort22.data.models.Question;
 public class OptionsMapper {
     public static Options mapToOptions(OptionsRequest optionsRequest, Question question) {
         Options options = new Options();
-        options.setText(optionsRequest.getText());
-        options.setQuestion(question);
+        options.setText(optionsRequest.getNewText());
+        options.setQuestionId(question.getId());
         options.setIsCorrect(optionsRequest.getIsCorrect());
         return options;
     }

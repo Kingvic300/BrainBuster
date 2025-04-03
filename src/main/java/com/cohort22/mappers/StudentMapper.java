@@ -15,7 +15,7 @@ public class StudentMapper extends UserMapper {
         student.setPassword(studentRequest.getPassword());
         student.setRole(studentRequest.getRole());
         student.setScore(studentRequest.getTotalScore());
-        student.setGames(games);
+        student.setGameId(games.getId());
         return student;
     }
     public static StudentResponse mapToStudentResponse(String message, Student student) {

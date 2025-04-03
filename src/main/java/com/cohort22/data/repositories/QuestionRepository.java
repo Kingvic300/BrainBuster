@@ -1,14 +1,12 @@
 package com.cohort22.data.repositories;
 
 import com.cohort22.data.models.Question;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface QuestionRepository extends JpaRepository<Question, Long> {
-    List<Question> findByQuizId(Long quizId);
-
-    List<Question> findByQuizTitle(String title);
+public interface QuestionRepository extends MongoRepository<Question, String> {
+    List<Question> findByQuizId(String quizId);
 }

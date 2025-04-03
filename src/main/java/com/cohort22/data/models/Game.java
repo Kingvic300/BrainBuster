@@ -1,57 +1,30 @@
 package com.cohort22.data.models;
 
 import com.cohort22.data.enums.GameStatus;
-import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.ArrayList;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 import java.util.Set;
 
 @Data
-@Entity
+@Document(collection = "games")
 public class Game {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "gamePin_id")
-    private Set<GamePin> gamePin;
+    private Set<GamePin> gamePins;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "quiz_id", nullable = false)
+    @DBRef
     private Quiz quiz;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "teacher_id")
+    @DBRef
     private Teacher teacher;
 
-    @Enumerated(EnumType.STRING)
     private GameStatus status;
 
-
-    @OneToMany(mappedBy = "games",fetch = FetchType.EAGER)
+    @DBRef
     private List<Student> students;
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object){
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        Game game = (Game) object;
-        return id != null && id.equals(game.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31;
-    }
 }
-
-
-

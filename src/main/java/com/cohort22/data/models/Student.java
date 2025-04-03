@@ -1,21 +1,15 @@
 package com.cohort22.data.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
-
-@EqualsAndHashCode(callSuper = true)
-@Entity
 @Data
-public class Student extends User{
+@EqualsAndHashCode(callSuper = true)
+@Document(collection = "students")
+public class Student extends User {
 
-
-    @ManyToOne
-    @JoinColumn(name = "game_id")
-    private Game games;
+    private String gameId;
     private int score;
-
 }

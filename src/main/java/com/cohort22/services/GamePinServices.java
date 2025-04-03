@@ -5,6 +5,7 @@ import com.cohort22.DTOS.response.GamePinResponse;
 import org.springframework.stereotype.Service;
 
 public interface GamePinServices {
-    GamePinResponse generateGamePin(Long gameId);
+    GamePinResponse generateGamePin(String gameId);
+
     GamePinResponse validateGamePin(GameRequest gameRequest);
 }

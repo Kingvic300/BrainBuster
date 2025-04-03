@@ -12,7 +12,7 @@ public class GameMapper {
     public static Game mapToGame(GameRequest gameRequest, Quiz quiz, List<Student> student, Set<GamePin> gamePin, Teacher teacher) {
         Game game = new Game();
         game.setQuiz(quiz);
-        game.setGamePin(gamePin);
+        game.setGamePins(gamePin);
         game.setStudents(student);
         game.setStatus(gameRequest.getGameStatus());
         game.setTeacher(teacher);

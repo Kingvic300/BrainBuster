@@ -1,20 +1,17 @@
 package com.cohort22.data.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
-
-@EqualsAndHashCode(callSuper = true)
-@Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
+@Document(collection = "teachers")
 public class Teacher extends User {
-    @OneToMany(mappedBy = "teacher")
-    private List<Quiz> quizzes;
+    
+    private List<String> quizIds;
 
-    @OneToMany(mappedBy = "teacher")
-    private List<Game> games;
-
+    private List<String> gameIds;
 }

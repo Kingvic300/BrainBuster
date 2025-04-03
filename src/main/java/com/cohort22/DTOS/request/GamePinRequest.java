@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class GamePinRequest {
     private String gamePin;
-    private Long gameId;
+    private String gameId;
 }

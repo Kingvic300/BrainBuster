@@ -23,28 +23,29 @@ public class OptionsServicesImpl implements OptionsServices {
     }
 
     @Override
-    public OptionsResponse getOptionById(Long id) {
+    public OptionsResponse getOptionById(String id) {
         Optional<Options> options = optionRepository.findById(id);
         if(options.isEmpty()){
-            throw new OptionsNotFoundException("Option not found with id: " + id);
+            throw new OptionsNotFoundException("Option not found with id");
         }
         return OptionsMapper.mapToOptionsResponse("Options Found",options.get());
     }
 
     @Override
     public OptionsResponse updateOption(OptionsRequest optionsRequest) {
-        Optional<Options> options= optionRepository.findByText(optionsRequest.getText());
-        if(options.isEmpty()){
-            throw new OptionsNotFoundException("Option not found with id: ");
+        Optional<Options> existingOptions = optionRepository.findById(optionsRequest.getId());
+        if(existingOptions.isEmpty()){
+            throw new OptionsNotFoundException("Option not found");
         }
-        options.get().setText(optionsRequest.getText());
-        options.get().setIsCorrect(optionsRequest.getIsCorrect());
-        optionRepository.save(options.get());
-        return OptionsMapper.mapToOptionsResponse("Options Updated Successfully",options.get());
+        Options options = existingOptions.get();
+        options.setText(optionsRequest.getNewText());
+        options.setIsCorrect(optionsRequest.getIsCorrect());
+        optionRepository.save(options);
+        return OptionsMapper.mapToOptionsResponse("Options Updated Successfully",options);
     }
 
     @Override
-    public void deleteOption(Long id) {
+    public void deleteOption(String id) {
        Optional<Options> options = optionRepository.findById(id);
        if(options.isEmpty()){
            throw new OptionsNotFoundException("Option not found with id: " + id);

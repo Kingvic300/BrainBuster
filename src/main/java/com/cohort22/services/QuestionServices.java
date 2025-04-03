@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface QuestionServices {
     List<Question> getAllQuestions();
-    Question getQuestionById(Long id);
-    Question saveQuestion(Question question);
-    void deleteQuestion(Long id);
+
+    Question getQuestionById(String id);
+
+    Question saveQuestion(Question questions);
+
+    void deleteQuestion(String id);
 }

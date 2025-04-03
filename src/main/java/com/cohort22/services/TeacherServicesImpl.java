@@ -26,7 +26,7 @@ public class TeacherServicesImpl implements TeacherServices {
 
     @Override
     public TeacherResponse updateTeacher(TeacherRequest teacherRequest) {
-        Optional<Teacher> teacher = teacherRepository.findByUsername(teacherRequest.getUsername());
+        Optional<Teacher> teacher = teacherRepository.findById(teacherRequest.getId());
         if (teacher.isEmpty()) {
             throw new TeacherNotFoundException("Teacher not found");
         }
@@ -39,18 +39,21 @@ public class TeacherServicesImpl implements TeacherServices {
 
     @Override
     public void deleteTeacher(TeacherRequest teacherRequest) {
-        Optional<Teacher> teacher = teacherRepository.findByUsername(teacherRequest.getUsername());
+        Optional<Teacher> teacher = teacherRepository.findById(teacherRequest.getId());
         if (teacher.isEmpty()) {
-            throw new StudentNotFoundException("Student not found");
+            throw new TeacherNotFoundException("Teacher not found");
         }
         teacherRepository.delete(teacher.get());
     }
 
     @Override
     public TeacherResponse getTeacherByName(TeacherRequest teacherRequest) {
-        Optional<Teacher> teacher = teacherRepository.findByUsername(teacherRequest.getUsername());
+        Optional<Teacher> teacher = teacherRepository.findById(teacherRequest.getId());
         if (teacher.isEmpty()) {
-            throw new StudentNotFoundException("Student not found");
+            throw new TeacherNotFoundException("Teacher not found");
+        }
+        if(!teacher.get().getUsername().equals(teacherRequest.getUsername())){
+            throw new TeacherNotFoundException("Teacher not found");
         }
         return TeacherMapper.mapToTeacherResponse("Teacher Found", teacher.get());
 

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class StudentRequest extends UserRequest {
    private Integer totalScore;
-   private Long gameId;
+   private String gameId;
 }

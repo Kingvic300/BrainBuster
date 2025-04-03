@@ -33,6 +33,10 @@ public class QuizServicesImpl implements QuizServices{
 
     @Override
     public QuizResponse generateQuiz(QuizRequest quizRequest) {
+        List<Question> questions = questionRepository.findAllById(quizRequest.getQuestionsId());
+        if (questions.isEmpty()) {
+            throw new QuestionNotFoundException("No questions found for this quiz");
+        }
         Teacher teacher = teacherRepository.findById(quizRequest.getTeacherId())
                 .orElseThrow(() -> new TeacherNotFoundException("Teacher not found"));
 
@@ -41,26 +45,24 @@ public class QuizServicesImpl implements QuizServices{
             throw new GameNotFoundException("No game found for this teacher");
         }
         Quiz quiz = new Quiz();
-        quiz.setTeacher(teacher);
+        quiz.setTeacherId(teacher.getId());
         quiz.setTitle(quizRequest.getTitle());
-        quiz.setGames(game.get());
+        quiz.setGameId(game.get().getId());
 
-        List<Question> questions = questionRepository.findByQuizTitle(quizRequest.getTitle());
-        if (questions == null || questions.isEmpty()) {
-            throw new QuestionNotFoundException("No questions found for this quiz");
-        }
-        quiz.setQuestions(questions);
+
+        quiz.setQuestionIds(List.of(questions.getFirst().getId()));
 
         quizRepository.save(quiz);
         return QuizMapper.mapToQuizResponse("Quiz Created Successfully", quiz);
     }
     @Override
     public QuizResponse updateQuiz(QuizRequest quizRequest) {
-        Optional<Quiz> quiz = quizRepository.findByTitle(quizRequest.getTitle());
+        Optional<Quiz> quiz = quizRepository.findById(quizRequest.getId());
         if (quiz.isEmpty()) {
             throw new QuizNotFoundException("Quiz not found");
         }
-        Game game = quiz.get().getGames();
+        Game game = gameRepository.findById(quizRequest.getGamesId())
+                .orElseThrow(() -> new GameNotFoundException("Game not found"));
         if (game == null) {
             throw new GameNotFoundException("No game associated with this quiz");
         }
@@ -72,16 +74,18 @@ public class QuizServicesImpl implements QuizServices{
 
     @Override
     public QuizResponse deleteQuiz(QuizRequest quizRequest) {
-        Quiz quiz = quizRepository.findByTitle(quizRequest.getTitle())
+        Quiz quiz = quizRepository.findById(quizRequest.getId())
                 .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
 
-        Game game = quiz.getGames();
+        Game game = gameRepository.findById(quizRequest.getGamesId())
+                .orElseThrow(() -> new GameNotFoundException("Game not found"));
         if (game != null) {
-            if (game.getGamePin() != null) {
-                GamePin pin =(GamePin) game.getGamePin();
+            if (game.getGamePins() != null) {
+                GamePin pin =(GamePin) game.getGamePins();
                 gamePinRepository.delete(pin);
             }
         }
+
         quizRepository.delete(quiz);
         return QuizMapper.mapToQuizResponse("Quiz Deleted Successfully", quiz);
     }

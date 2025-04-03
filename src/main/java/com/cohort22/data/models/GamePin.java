@@ -1,20 +1,17 @@
 package com.cohort22.data.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
 @Data
-@Table(name = "gamepin")
+@Document(collection = "gamepins")
 public class GamePin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String pin;
 
-    @ManyToOne
-    @JoinColumn(name = "game", nullable = false)
-    private Game game;
+    private String gameId;
 }

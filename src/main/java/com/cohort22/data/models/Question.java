@@ -1,26 +1,20 @@
 package com.cohort22.data.models;
 
-
-import jakarta.persistence.*;
 import lombok.Data;
-
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
-
 @Data
-@Entity
+@Document(collection = "questions")
 public class Question {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
+
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
-
-    @OneToMany(mappedBy = "question")
-    private List<Options> options;
-
     private String answer;
+
+    private String quizId;
+
+    private List<Options> options;
 }

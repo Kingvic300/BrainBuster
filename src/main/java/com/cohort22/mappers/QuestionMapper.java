@@ -14,7 +14,7 @@ public class QuestionMapper {
         Question question = new Question();
         question.setAnswer(questionRequest.getAnswer());
         question.setOptions(options);
-        question.setQuiz(quiz);
+        question.setQuizId(quiz.getId());
         question.setName(questionRequest.getName());
         return question;
     }

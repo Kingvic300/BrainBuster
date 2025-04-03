@@ -10,7 +10,7 @@ public class GamePinMapper {
     public static GamePin mapToGamePin(GamePinRequest gamePinRequest, Game game) {
         GamePin gamePin = new GamePin();
         gamePin.setPin(gamePinRequest.getGamePin());
-        gamePin.setGame(game);
+        gamePin.setGameId(game.getId());
         return gamePin;
     }
     public static GamePinResponse mapToGamePinResponse(String message, GamePin gamePin) {

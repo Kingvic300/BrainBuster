@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TeacherRequest extends UserRequest {
-    private Long quizIds;
-    private Long gameId;
+    private String quizIds;
+    private String gameId;
 
 }

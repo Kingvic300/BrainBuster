@@ -7,23 +7,19 @@ import com.cohort22.DTOS.response.TeacherResponse;
 import com.cohort22.data.models.GamePin;
 import com.cohort22.data.models.Teacher;
 
+import java.util.List;
+
 public class TeacherMapper extends UserMapper {
 
-    public static Teacher mapToTeacher(TeacherRequest teacherRequest) {
+    public static Teacher mapToTeacher(TeacherRequest teacherRequest, List<String> gameIds,List<String> quiIds) {
         Teacher teacher = new Teacher();
         teacher.setUsername(teacherRequest.getUsername());
         teacher.setEmail(teacherRequest.getEmail());
         teacher.setPassword(teacherRequest.getPassword());
         teacher.setRole(teacherRequest.getRole());
+        teacher.setGameIds(gameIds);
+        teacher.setQuizIds(quiIds);
         return teacher;
-    }
-    public static TeacherRequest mapToTeacherRequest(Teacher teacher) {
-        TeacherRequest teacherRequest = new TeacherRequest();
-        teacherRequest.setUsername(teacher.getUsername());
-        teacherRequest.setEmail(teacher.getEmail());
-        teacherRequest.setPassword(teacher.getPassword());
-        teacherRequest.setRole(teacher.getRole());
-        return teacherRequest;
     }
     public static TeacherResponse mapToTeacherResponse(String message, Teacher teacher) {
         TeacherResponse teacherResponse = new TeacherResponse();

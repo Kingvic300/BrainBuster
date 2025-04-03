@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 public interface OptionsServices {
     OptionsResponse createOption(Options options);
-
-    OptionsResponse getOptionById(Long id);
-
+    OptionsResponse getOptionById(String id);
     OptionsResponse updateOption(OptionsRequest optionsRequest);
-
-    void deleteOption(Long id);
+    void deleteOption(String id);
 }

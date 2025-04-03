@@ -1,20 +1,17 @@
 package com.cohort22.data.models;
 
-
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
+@Document(collection = "options")
 public class Options {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
+
     private String text;
     private Boolean isCorrect;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private Question question;
+    private String questionId;
 }
-
