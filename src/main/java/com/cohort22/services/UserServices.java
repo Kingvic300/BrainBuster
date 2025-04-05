@@ -9,9 +9,9 @@ import com.cohort22.DTOS.response.UserResponse;
 import com.cohort22.data.models.User;
 
 public interface UserServices {
-    UserResponse createUser(User user);
-    void deleteUser(UserRequest userRequest);
-    UserResponse getUserById(UserRequest userRequest);
+    UserResponse createUser(UserRequest userRequest);
+
+    UserResponse deleteUser(UserRequest userRequest);
     StudentResponse getStudentByName(StudentRequest studentRequest);
 
     TeacherResponse getTeacherByName(TeacherRequest teacherRequest);

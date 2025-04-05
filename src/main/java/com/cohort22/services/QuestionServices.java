@@ -1,16 +1,18 @@
 package com.cohort22.services;
 
+import com.cohort22.DTOS.request.QuestionRequest;
+import com.cohort22.DTOS.response.QuestionResponse;
 import com.cohort22.data.models.Question;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 public interface QuestionServices {
-    List<Question> getAllQuestions();
+    List<QuestionResponse> getAllQuestions();
 
-    Question getQuestionById(String id);
+    QuestionResponse getQuestionByName(QuestionRequest questionRequest);
 
-    Question saveQuestion(Question questions);
+    QuestionResponse createQuestion(QuestionRequest questions);
 
-    void deleteQuestion(String id);
+    QuestionResponse deleteQuestion(QuestionRequest questions);
 }

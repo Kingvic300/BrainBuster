@@ -95,7 +95,6 @@ public class QuizServicesImplTest {
 
         QuizRequest request = new QuizRequest();
         request.setGamesId(quiz.getGameId());
-        request.setId(quiz.getId());
         request.setTeacherId(quiz.getTeacherId());
         request.setTitle("New Title");
 
@@ -121,14 +120,15 @@ public class QuizServicesImplTest {
 
         Quiz quiz = new Quiz();
         quiz.setTitle("Test Quiz");
+        quiz.setTeacherId("123");
         quiz.setGameId(game.getId());
         quizRepository.save(quiz);
 
 
 
         QuizRequest request = new QuizRequest();
+        request.setTeacherId(quiz.getTeacherId());
         request.setGamesId(quiz.getGameId());
-        request.setId(quiz.getId());
         request.setTitle("Test Quiz");
 
         QuizResponse response = quizServices.deleteQuiz(request);

@@ -6,9 +6,11 @@ import com.cohort22.data.models.Student;
 import org.springframework.stereotype.Service;
 
 public interface StudentServices {
-    StudentResponse addNewStudent(Student student);
+    StudentResponse addNewStudent(StudentRequest studentRequest);
+
     StudentResponse updateStudent(StudentRequest studentRequest);
-    void deleteStudent(StudentRequest studentRequest);
+
+    StudentResponse deleteStudent(StudentRequest studentRequest);
 
     StudentResponse getStudentByName(StudentRequest studentRequest);
 

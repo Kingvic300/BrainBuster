@@ -63,7 +63,6 @@ public class GamePinServicesImplTest {
         GamePin savedGamePin = gamePinRepository.findByGameId(game.getId()).get();
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGameId(game.getId());
         gameRequest.setGamePin(savedGamePin.getPin());
 
         GamePinResponse validateGamePin = gamePinServices.validateGamePin(gameRequest);

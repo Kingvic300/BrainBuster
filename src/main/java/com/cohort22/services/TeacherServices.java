@@ -6,8 +6,11 @@ import com.cohort22.data.models.Teacher;
 import org.springframework.stereotype.Service;
 
 public interface TeacherServices {
-    TeacherResponse createTeacher(Teacher teacher);
+    TeacherResponse createTeacher(TeacherRequest teacherRequest);
+
     TeacherResponse updateTeacher(TeacherRequest teacherRequest);
-    void deleteTeacher(TeacherRequest teacherRequest);
+
+    TeacherResponse deleteTeacher(TeacherRequest teacherRequest);
+
     TeacherResponse getTeacherByName(TeacherRequest teacherRequest);
 }

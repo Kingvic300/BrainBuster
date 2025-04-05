@@ -7,7 +7,6 @@ import lombok.Data;
 public class GameRequest {
     private String gamePin;
     private String answer;
-    private String gameId;
     private String studentsId;
     private String quizId;
     private GameStatus gameStatus;

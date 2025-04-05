@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface QuizRepository extends MongoRepository<Quiz, String> {
     Optional<Quiz> findByTitle(String title);
-    List<Quiz> findByTeacherId(String id);
+    Optional<Quiz> findByTeacherId(String id);
+
+    List<Quiz> findAllByTeacherId(String id);
 }

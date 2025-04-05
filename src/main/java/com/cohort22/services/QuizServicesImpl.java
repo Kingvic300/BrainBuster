@@ -57,7 +57,7 @@ public class QuizServicesImpl implements QuizServices{
     }
     @Override
     public QuizResponse updateQuiz(QuizRequest quizRequest) {
-        Optional<Quiz> quiz = quizRepository.findById(quizRequest.getId());
+        Optional<Quiz> quiz = quizRepository.findByTeacherId(quizRequest.getTeacherId());
         if (quiz.isEmpty()) {
             throw new QuizNotFoundException("Quiz not found");
         }
@@ -74,9 +74,10 @@ public class QuizServicesImpl implements QuizServices{
 
     @Override
     public QuizResponse deleteQuiz(QuizRequest quizRequest) {
-        Quiz quiz = quizRepository.findById(quizRequest.getId())
-                .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
-
+        Optional<Quiz> quiz = quizRepository.findByTeacherId(quizRequest.getTeacherId());
+        if (quiz.isEmpty()) {
+            throw new QuizNotFoundException("Quiz not found");
+        }
         Game game = gameRepository.findById(quizRequest.getGamesId())
                 .orElseThrow(() -> new GameNotFoundException("Game not found"));
         if (game != null) {
@@ -86,8 +87,8 @@ public class QuizServicesImpl implements QuizServices{
             }
         }
 
-        quizRepository.delete(quiz);
-        return QuizMapper.mapToQuizResponse("Quiz Deleted Successfully", quiz);
+        quizRepository.delete(quiz.get());
+        return QuizMapper.mapToQuizResponse("Quiz Deleted Successfully", quiz.get());
     }
 
 
@@ -96,7 +97,7 @@ public class QuizServicesImpl implements QuizServices{
         Teacher teacher = teacherRepository.findById(quizRequest.getTeacherId())
                 .orElseThrow(() -> new TeacherNotFoundException("Teacher not found"));
 
-        List<Quiz> quizzes = quizRepository.findByTeacherId(teacher.getId());
+        List<Quiz> quizzes = quizRepository.findAllByTeacherId(teacher.getId());
 
         if (quizzes.isEmpty()) {
             throw new QuizNotFoundException("No quizzes found for this teacher");

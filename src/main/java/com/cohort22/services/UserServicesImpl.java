@@ -34,28 +34,26 @@ public class UserServicesImpl implements UserServices {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
     @Override
-    public UserResponse createUser(User user) {
+    public UserResponse createUser(UserRequest userRequest) {
+        User user = new User();
+        user.setEmail(userRequest.getEmail());
+        user.setPassword(userRequest.getPassword());
+        user.setUsername(userRequest.getUsername());
+        user.setRole(userRequest.getRole());
         userRepository.save(user);
         return UserMapper.mapToUserResponse("User Created Successfully", user);
     }
 
     @Override
-    public void deleteUser(UserRequest userRequest) {
+    public UserResponse deleteUser(UserRequest userRequest) {
         Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
         if (user.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }
         userRepository.delete(user.get());
-    }
-
-    @Override
-    public UserResponse getUserById(UserRequest userRequest) {
-        Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        return UserMapper.mapToUserResponse("User Found", user.get());
+        return UserMapper.mapToUserResponse("User Deleted Successfully", user.get());
     }
 
     @Override

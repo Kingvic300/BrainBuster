@@ -58,8 +58,10 @@ public class GameServicesImpl implements GameServices {
 
     @Override
     public GameResponse joinGame(GameRequest gameRequest) {
-        Game game = gameRepository.findById(gameRequest.getGameId())
-                .orElseThrow(() -> new GameNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findByTeacherId(gameRequest.getTeacherId());
+                if(game.isEmpty()){
+                    throw new GameNotFoundException("Game not found");
+                }
 
         Game validatedGamePin = validateGamePin(gameRequest);
 
@@ -69,21 +71,24 @@ public class GameServicesImpl implements GameServices {
         validatedGamePin.getStudents().add(student);
         gameRepository.save(validatedGamePin);
 
-        return GameMapper.mapToGameResponse("Player Joined Successfully", game.getStatus());
+        return GameMapper.mapToGameResponse("Player Joined Successfully", game.get().getStatus());
     }
 
     @Override
     public GameResponse startGame(GameRequest gameRequest) {
-        Game game = gameRepository.findById(gameRequest.getGameId())
-                .orElseThrow(() -> new GameNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findByTeacherId(gameRequest.getTeacherId());
+        if(game.isEmpty()){
+            throw new GameNotFoundException("Game not found");
+        }
 
-        if (game.getStudents().isEmpty()) {
+
+        if (game.get().getStudents().isEmpty()) {
             throw new StudentNotFoundException("No students found for this game");
         }
-        game.setStatus(GameStatus.IN_PROGRESS);
-        gameRepository.save(game);
+        game.get().setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game.get());
 
-        return GameMapper.mapToGameResponse("Game Started Successfully", game.getStatus());
+        return GameMapper.mapToGameResponse("Game Started Successfully", game.get().getStatus());
     }
 
     @Override
@@ -126,9 +131,13 @@ public class GameServicesImpl implements GameServices {
         if (activeGames.isEmpty()) {
             throw new GameNotActiveException("No active games found");
         }
-        return activeGames.stream()
-                .map(game -> GameMapper.mapToGameResponse("Active game found", game.getStatus()))
-                .collect(Collectors.toList());
+
+        List<GameResponse> responses = new ArrayList<>();
+        for (Game game : activeGames) {
+            GameResponse response = GameMapper.mapToGameResponse("Active game found", game.getStatus());
+            responses.add(response);
+        }
+        return responses;
     }
 
     @Override

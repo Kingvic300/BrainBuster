@@ -16,4 +16,6 @@ public interface GameRepository extends MongoRepository<Game, String> {
     List<Game> findByStudentsId(String id);
     Optional<Game> findByQuizId(String id);
     Optional<Game> findByTeacher(Teacher teacher);
+
+    Optional<Game> findByTeacherId(String teacherId);
 }

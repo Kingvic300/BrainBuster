@@ -17,14 +17,18 @@ public class OptionsServicesImpl implements OptionsServices {
     private OptionsRepository optionRepository;
 
     @Override
-    public OptionsResponse createOption(Options options) {
+    public OptionsResponse createOption(OptionsRequest optionsRequest) {
+        Options options = new Options();
+        options.setQuestionId(optionsRequest.getQuestionId());
+        options.setText(optionsRequest.getNewText());
+        options.setIsCorrect(optionsRequest.getIsCorrect());
         optionRepository.save(options);
         return OptionsMapper.mapToOptionsResponse("Options Created Successfully",options);
     }
 
     @Override
-    public OptionsResponse getOptionById(String id) {
-        Optional<Options> options = optionRepository.findById(id);
+    public OptionsResponse getOptionById(OptionsRequest optionsRequest) {
+        Optional<Options> options = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
         if(options.isEmpty()){
             throw new OptionsNotFoundException("Option not found with id");
         }
@@ -33,7 +37,7 @@ public class OptionsServicesImpl implements OptionsServices {
 
     @Override
     public OptionsResponse updateOption(OptionsRequest optionsRequest) {
-        Optional<Options> existingOptions = optionRepository.findById(optionsRequest.getId());
+        Optional<Options> existingOptions = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
         if(existingOptions.isEmpty()){
             throw new OptionsNotFoundException("Option not found");
         }
@@ -45,11 +49,12 @@ public class OptionsServicesImpl implements OptionsServices {
     }
 
     @Override
-    public void deleteOption(String id) {
-       Optional<Options> options = optionRepository.findById(id);
+    public OptionsResponse deleteOption(OptionsRequest optionsRequest) {
+       Optional<Options> options = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
        if(options.isEmpty()){
-           throw new OptionsNotFoundException("Option not found with id: " + id);
+           throw new OptionsNotFoundException("Option not found with id: ");
        }
        optionRepository.delete(options.get());
+       return OptionsMapper.mapToOptionsResponse("Options Deleted Successfully",options.get());
     }
 }

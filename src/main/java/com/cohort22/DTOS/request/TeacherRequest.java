@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TeacherRequest extends UserRequest {
+    private String newUserName;
     private String quizIds;
     private String gameId;
 

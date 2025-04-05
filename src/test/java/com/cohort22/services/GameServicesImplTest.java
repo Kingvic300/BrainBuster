@@ -35,6 +35,12 @@ public class GameServicesImplTest {
 
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private OptionsRepository optionsRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
 
     @Test
@@ -50,7 +56,6 @@ public class GameServicesImplTest {
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setGamePin("123");
-        gameRequest.setGameId(game.getId());
         gameRequest.setQuizId(quiz.getId());
 
         GameResponse response = gameServices.createGame(gameRequest);
@@ -97,7 +102,6 @@ public class GameServicesImplTest {
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGameId(game.getId());
         gameRequest.setGamePin(gamePin.getPin());
         gameRequest.setStudentsId(student.getId());
 
@@ -128,13 +132,140 @@ public class GameServicesImplTest {
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setStudentsId(student.getId());
-        gameRequest.setGameId(game.getId());
         System.out.println(studentList);
 
         GameResponse response = gameServices.startGame(gameRequest);
         assertEquals("Game Started Successfully", response.getMessage());
         assertEquals(GameStatus.IN_PROGRESS, game.getStatus());
     }
+    @Test
+    public void testEndGameSuccessfully() {
+        Quiz quiz = new Quiz();
+        quiz.setTitle("science");
+        quizRepository.save(quiz);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+
+        GamePin gamePin = new GamePin();
+        gamePin.setPin("9012");
+        gamePin.setGameId(game.getId());
+        gamePinRepository.save(gamePin);
+
+        game.setGamePins(Set.of(gamePin));
+        gameRepository.save(game);
+
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setGamePin(gamePin.getPin());
+
+        GameResponse response = gameServices.endGame(gameRequest);
+
+        assertEquals("Game has ended", response.getMessage());
+        assertEquals(GameStatus.COMPLETED.toString(), response.getStatus());
+    }
+
+    @Test
+    public void testThatPlayerCanSubmitAnswer() {
+        Teacher teacher = new Teacher();
+        teacher.setUsername("victor");
+        teacherRepository.save(teacher);
+        Options options = new Options();
+        options.setText("four");
+        options.setIsCorrect(false);
+
+        Options options1 = new Options();
+        options1.setText("two");
+        options1.setIsCorrect(true);
+        optionsRepository.saveAll(List.of(options,options1));
+
+        Question question = new Question();
+        question.setName("How many legs do u have");
+        question.setAnswer("correct answer");
+        question.setOptions(List.of(options,options1));
+        questionRepository.save(question);
+
+        Quiz quiz = new Quiz();
+        quiz.setTitle("Test Quiz");
+        quiz.setQuestionIds(List.of(question.getId()));
+        quiz.setTeacherId(teacher.getId());
+        quizRepository.save(quiz);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+
+        Student student = new Student();
+        student.setUsername("victor");
+        student.setScore(0);
+        studentRepository.save(student);
+
+        GamePin gamePin = new GamePin();
+        gamePin.setPin("1234");
+        gamePin.setGameId(game.getId());
+        gamePinRepository.save(gamePin);
+
+        game.setGamePins(Set.of(gamePin));
+        gameRepository.save(game);
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setStudentsId(student.getId());
+        gameRequest.setQuizId(quiz.getId());
+        gameRequest.setAnswer("correct answer");
+        gameRequest.setGamePin(gamePin.getPin());
+
+        GameResponse response = gameServices.submitAnswer(gameRequest);
+
+        Student updatedStudent = studentRepository.findById(student.getId()).orElseThrow();
+
+        assertEquals(10, updatedStudent.getScore());
+        assertEquals("Answer has been submitted", response.getMessage());
+    }
+    @Test
+    public void testGetCurrentGameState() {
+        Quiz quiz = new Quiz();
+        quiz.setTitle("State Quiz");
+        quizRepository.save(quiz);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+
+        GamePin gamePin = new GamePin();
+        gamePin.setPin("5678");
+        gamePin.setGameId(game.getId());
+        gamePinRepository.save(gamePin);
+
+        game.setGamePins(Set.of(gamePin));
+        gameRepository.save(game);
+
+        GameRequest gameRequest = new GameRequest();
+        gameRequest.setGamePin(gamePin.getPin());
+
+        GameResponse response = gameServices.getCurrentState(gameRequest);
+
+        assertEquals("Game current state", response.getMessage());
+        assertEquals(GameStatus.IN_PROGRESS.toString(), response.getStatus());
+    }
+    @Test
+    public void testGetActiveGamesReturnsActiveGames() {
+        Quiz quiz = new Quiz();
+        quiz.setTitle("Active Quiz");
+        quizRepository.save(quiz);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        gameRepository.save(game);
+
+        List<GameResponse> activeGames = gameServices.getActiveGames();
+
+        assertFalse(activeGames.isEmpty());
+        assertEquals("Active game found", activeGames.get(0).getMessage());
+    }
+
     @AfterEach
     public void tearDown() {
         gamePinRepository.deleteAll();

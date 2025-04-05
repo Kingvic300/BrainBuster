@@ -6,8 +6,11 @@ import com.cohort22.data.models.Options;
 import org.springframework.stereotype.Service;
 
 public interface OptionsServices {
-    OptionsResponse createOption(Options options);
-    OptionsResponse getOptionById(String id);
+    OptionsResponse createOption(OptionsRequest optionsRequest);
+
+    OptionsResponse getOptionById(OptionsRequest optionsRequest);
+
     OptionsResponse updateOption(OptionsRequest optionsRequest);
-    void deleteOption(String id);
+
+    OptionsResponse deleteOption(OptionsRequest optionsRequest);
 }

@@ -7,6 +7,7 @@ import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Student;
 import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.StudentRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,9 +32,11 @@ class StudentServicesImplTest {
     @Test
     void addNewStudent() {
         Student student = new Student();
+        student.setUsername("student");
         studentRepository.save(student);
-
-        StudentResponse response = studentServices.addNewStudent(student);
+        StudentRequest studentRequest = new StudentRequest();
+        studentRequest.setUsername("student");
+        StudentResponse response = studentServices.addNewStudent(studentRequest);
         assertNotNull(student.getId());
         assertEquals("Student added successfully", response.getMessage());
 
@@ -46,7 +49,6 @@ class StudentServicesImplTest {
         studentRepository.save(student);
 
         StudentRequest studentRequest = new StudentRequest();
-        studentRequest.setId(student.getId());
         studentRequest.setUsername("vic");
 
         StudentResponse response = studentServices.updateStudent(studentRequest);
@@ -63,10 +65,9 @@ class StudentServicesImplTest {
         studentRepository.save(student);
 
         StudentRequest studentRequest = new StudentRequest();
-        studentRequest.setId(student.getId());
         studentRequest.setUsername("victor");
 
-        studentServices.deleteStudent(studentRequest);
+        StudentResponse response = studentServices.deleteStudent(studentRequest);
         assertNotNull(student.getId());
         assertFalse(studentRepository.existsById(student.getId()));
     }
@@ -78,7 +79,6 @@ class StudentServicesImplTest {
         studentRepository.save(student);
 
         StudentRequest studentRequest = new StudentRequest();
-        studentRequest.setId(student.getId());
         studentRequest.setUsername(student.getUsername());
 
         StudentResponse response = studentServices.getStudentByName(studentRequest);
@@ -101,12 +101,15 @@ class StudentServicesImplTest {
         gameRepository.save(game);
 
         StudentRequest studentRequest = new StudentRequest();
-        studentRequest.setId(student.getId());
         studentRequest.setUsername("victor");
         studentRequest.setGameId(game.getId());
 
         StudentResponse response = studentServices.findStudentInGameById(studentRequest);
         assertNotNull(student.getId());
         assertEquals("Student Found", response.getMessage());
+    }
+    @AfterEach
+    public void tearDown(){
+        studentRepository.deleteAll();
     }
 }

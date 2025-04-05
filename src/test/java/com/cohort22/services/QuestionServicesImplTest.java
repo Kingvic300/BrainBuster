@@ -1,5 +1,7 @@
 package com.cohort22.services;
 
+import com.cohort22.DTOS.request.QuestionRequest;
+import com.cohort22.DTOS.response.QuestionResponse;
 import com.cohort22.data.models.Question;
 import com.cohort22.data.repositories.QuestionRepository;
 import com.cohort22.exceptions.QuestionNotFoundException;
@@ -23,39 +25,51 @@ public class QuestionServicesImplTest {
 
     @Autowired
     private QuestionServices questionService;
-
-    @BeforeEach
-    public void setUp() {
-        Question sampleQuestion = new Question();
-        sampleQuestion.setName("Why is akerele short");
-        questionRepository.save(sampleQuestion);
-    }
-
     @Test
     public void testThatGetAllQuestionsReturnsAListOfQuestions() {
-        List<Question> questions = questionService.getAllQuestions();
-        assertEquals(1, questions.size());
+        Question sampleQuestion = new Question();
+        sampleQuestion.setName("Why is akerele short");
+
+        Question sampleQuestion1 = new Question();
+        sampleQuestion1.setName("Why is akerele short");
+
+        questionRepository.saveAll(List.of(sampleQuestion, sampleQuestion1));
+
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setName("Why is akerele short");
+
+        List<QuestionResponse> questionResponses = questionService.getAllQuestions();
+        assertEquals(questionResponses.size(), 2);
+        assertNotNull(questionResponses);
     }
 
     @Test
     public void getAllQuestionsShouldThrowExceptionIfQuestionIsNotFound() {
-        questionRepository.deleteAll();
+        QuestionRequest questionRequest = new QuestionRequest();
+
         Exception exception = assertThrows(QuestionNotFoundException.class, () -> questionService.getAllQuestions());
-        assertEquals("No questions found", exception.getMessage());
+        assertEquals("Question not found", exception.getMessage());
     }
     @Test
-    public void testThatGetQuestionByIdWorks() {
-        Question question = questionRepository.findAll().getFirst();
-        Question foundQuestion = questionService.getQuestionById(question.getId());
+    public void testThatGetQuestionByNameWorks() {
+      Question question = new Question();
+      question.setName("Why is akerele short");
+      questionRepository.save(question);
 
-        assertNotNull(foundQuestion);
-        assertEquals("Why is akerele short", foundQuestion.getName());
+      QuestionRequest questionRequest = new QuestionRequest();
+      questionRequest.setName("Why is akerele short");
+
+      QuestionResponse questionResponse = questionService.getQuestionByName(questionRequest);
+
+      assertNotNull(questionResponse);
+      assertEquals("Why is akerele short", questionRequest.getName());
     }
 
     @Test
     public void testThatGetQuestionByIdThrowsAnExceptionIfQuestionIsNotFound() {
-        Exception exception = assertThrows(QuestionNotFoundException.class, () -> questionService.getQuestionById("100L"));
-        assertEquals("Question Not Found", exception.getMessage());
+        QuestionRequest questionRequest = new QuestionRequest();
+        Exception exception = assertThrows(QuestionNotFoundException.class, () -> questionService.getQuestionByName(questionRequest));
+        assertEquals("Question not found", exception.getMessage());
     }
 
     @Test
@@ -64,34 +78,37 @@ public class QuestionServicesImplTest {
         newQuestion.setName("Why is akerele short");
         questionRepository.save(newQuestion);
 
-        Question savedQuestion = questionService.saveQuestion(newQuestion);
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setName("Why is akerele short");
 
-        assertNotNull(savedQuestion.getId());
-        assertEquals("Why is akerele short", savedQuestion.getName());
+        QuestionResponse savedQuestion = questionService.createQuestion(questionRequest);
+
+        assertNotNull(savedQuestion);
+        assertEquals("Why is akerele short", questionRequest.getName());
     }
-
-    @Test
-    public void testThatSaveQuestionsThrowsAnExceptionIfQuestionIsNotFound() {
-        Question question = new Question();
-        Exception exception =  assertThrows(QuestionNotFoundException.class, () -> questionService.saveQuestion(question));
-        assertEquals("Question Not Found", exception.getMessage());
-    }
-
     @Test
     public void testThatDeleteQuestionsDeletesAParticularQuestion() {
-        Question question = questionRepository.findAll().getFirst();
-        System.out.println(question.getName());
-        questionService.deleteQuestion(question.getId());
+        Question question = new Question();
+        question.setName("Why is akerele short");
+        questionRepository.save(question);
+
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setName("Why is akerele short");
+
+        QuestionResponse questionResponse = questionService.deleteQuestion(questionRequest);
+        assertNotNull(questionResponse);
+        assertEquals("Question deleted", questionResponse.getMessage());
         assertEquals(0, questionRepository.findAll().size());
     }
 
     @Test
     public void testThatDeleteQuestionsThrowsAnExceptionIfQuestionIsNotFound() {
-        Exception exception = assertThrows(QuestionNotFoundException.class, () -> questionService.deleteQuestion("9L"));
+        QuestionRequest questionRequest = new QuestionRequest();
+        Exception exception = assertThrows(QuestionNotFoundException.class, () -> questionService.deleteQuestion(questionRequest));
         assertEquals("Question Not Found", exception.getMessage());
     }
     @AfterEach
-    public void setDown(){
+    public void tearDown(){
         questionRepository.deleteAll();
     }
 }

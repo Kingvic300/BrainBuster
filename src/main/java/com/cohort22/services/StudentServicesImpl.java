@@ -24,14 +24,21 @@ public class StudentServicesImpl implements StudentServices {
     private GameRepository gameRepository;
 
     @Override
-    public StudentResponse addNewStudent(Student student) {
+    public StudentResponse addNewStudent(StudentRequest studentRequest) {
+        Student student = new Student();
+        student.setUsername(studentRequest.getUsername());
+        student.setPassword(studentRequest.getPassword());
+        student.setEmail(studentRequest.getEmail());
+        student.setScore(studentRequest.getTotalScore());
+        student.setGameId(studentRequest.getGameId());
+        student.setRole(studentRequest.getRole());
         studentRepository.save(student);
         return StudentMapper.mapToStudentResponse("Student added successfully", student);
     }
 
     @Override
     public StudentResponse updateStudent(StudentRequest studentRequest) {
-        Optional<Student> student = studentRepository.findById(studentRequest.getId());
+        Optional<Student> student = studentRepository.findByUsername(studentRequest.getUsername());
         if (student.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }
@@ -42,17 +49,18 @@ public class StudentServicesImpl implements StudentServices {
     }
 
     @Override
-    public void deleteStudent(StudentRequest studentRequest) {
-        Optional<Student> student = studentRepository.findById(studentRequest.getId());
+    public StudentResponse deleteStudent(StudentRequest studentRequest) {
+        Optional<Student> student = studentRepository.findByUsername(studentRequest.getUsername());
         if (student.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }
         studentRepository.delete(student.get());
+        return StudentMapper.mapToStudentResponse("deleted Successfully",student.get());
     }
 
     @Override
     public StudentResponse getStudentByName(StudentRequest studentRequest) {
-        Optional<Student> student = studentRepository.findById(studentRequest.getId());
+        Optional<Student> student = studentRepository.findByUsername(studentRequest.getUsername());
         if (student.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }

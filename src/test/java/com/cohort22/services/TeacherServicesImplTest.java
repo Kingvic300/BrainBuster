@@ -4,6 +4,7 @@ import com.cohort22.DTOS.request.TeacherRequest;
 import com.cohort22.DTOS.response.TeacherResponse;
 import com.cohort22.data.models.Teacher;
 import com.cohort22.data.repositories.TeacherRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,9 @@ class TeacherServicesImplTest {
         teacher.setUsername("akerele");
         teacherRepository.save(teacher);
 
-        TeacherResponse response = teacherServices.createTeacher(teacher);
+        TeacherRequest teacherRequest = new TeacherRequest();
+        teacherRequest.setUsername("akerele");
+        TeacherResponse response = teacherServices.createTeacher(teacherRequest);
         assertNotNull(response);
         assertEquals("akerele", response.getUsername());
         assertEquals("Teacher Created Successfully", response.getMessage());
@@ -38,12 +41,12 @@ class TeacherServicesImplTest {
         teacherRepository.save(teacher);
 
         TeacherRequest teacherRequest = new TeacherRequest();
-        teacherRequest.setId(teacher.getId());
-        teacherRequest.setUsername("akerel");
+        teacherRequest.setUsername("akerele");
+        teacherRequest.setNewUserName("akerel");
 
         TeacherResponse response = teacherServices.updateTeacher(teacherRequest);
         assertNotNull(response);
-        assertEquals("akerel", response.getUsername());
+        assertEquals("akerele", response.getUsername());
         assertEquals("Teacher updated successfully", response.getMessage());
     }
 
@@ -54,8 +57,7 @@ class TeacherServicesImplTest {
         teacherRepository.save(teacher);
 
         TeacherRequest teacherRequest = new TeacherRequest();
-        teacherRequest.setId(teacher.getId());
-        teacherRequest.setUsername("akerele");
+        teacherRequest.setUsername(teacher.getUsername());
 
         teacherServices.deleteTeacher(teacherRequest);
         assertFalse(teacherRepository.existsById(teacher.getId()));
@@ -68,12 +70,16 @@ class TeacherServicesImplTest {
         teacherRepository.save(teacher);
 
         TeacherRequest teacherRequest = new TeacherRequest();
-        teacherRequest.setId(teacher.getId());
-        teacherRequest.setUsername("akerele");
+        teacherRequest.setUsername(teacher.getUsername());
 
         TeacherResponse response = teacherServices.getTeacherByName(teacherRequest);
         assertNotNull(response);
         assertEquals("akerele", response.getUsername());
         assertEquals("Teacher Found", response.getMessage());
+    }
+    @AfterEach
+    public void tearDown(){
+        teacherRepository.deleteAll();
+
     }
 }

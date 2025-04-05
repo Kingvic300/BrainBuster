@@ -5,6 +5,7 @@ import com.cohort22.DTOS.response.OptionsResponse;
 import com.cohort22.data.models.Options;
 import com.cohort22.data.repositories.OptionsRepository;
 import com.cohort22.exceptions.OptionsNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,13 +22,19 @@ public class OptionsServicesImplTest {
 
     @Autowired
     private OptionsRepository optionsRepository;
+
     @Test
     public void testThatOptionCanBeCreated() {
         Options options = new Options();
         options.setText("yes");
+        options.setQuestionId("123");
         options.setIsCorrect(true);
-
-        OptionsResponse response = optionsServices.createOption(options);
+        optionsRepository.save(options);
+        OptionsRequest request = new OptionsRequest();
+        request.setQuestionId("123");
+        request.setIsCorrect(true);
+        request.setNewText("yes");
+        OptionsResponse response = optionsServices.createOption(request);
 
         assertNotNull(response);
         assertEquals("Options Created Successfully", response.getMessage());
@@ -37,10 +44,15 @@ public class OptionsServicesImplTest {
     void testGetOptionById() {
         Options options = new Options();
         options.setText("yes");
+        options.setQuestionId("123");
         options.setIsCorrect(true);
         optionsRepository.save(options);
 
-        OptionsResponse response = optionsServices.getOptionById(options.getId());
+        OptionsRequest optionsRequest = new OptionsRequest();
+        optionsRequest.setQuestionId(options.getQuestionId());
+        optionsRequest.setNewText(options.getText());
+        optionsRequest.setIsCorrect(options.getIsCorrect());
+        OptionsResponse response = optionsServices.getOptionById(optionsRequest);
 
         assertNotNull(response);
         assertEquals("Options Found", response.getMessage());
@@ -48,18 +60,27 @@ public class OptionsServicesImplTest {
 
     @Test
     void testGetOptionByIdNotFound() {
-        assertThrows(OptionsNotFoundException.class, () -> optionsServices.getOptionById("123"));
+        Options options = new Options();
+        options.setText("yes");
+        options.setQuestionId("123");
+        options.setIsCorrect(true);
+        optionsRepository.save(options);
+
+        OptionsRequest request = new OptionsRequest();
+        request.setQuestionId("3333");
+        assertThrows(OptionsNotFoundException.class, () -> optionsServices.getOptionById(request));
     }
 
     @Test
     void testUpdateOption() {
         Options options = new Options();
         options.setText("yes");
+        options.setQuestionId("123");
         options.setIsCorrect(true);
         optionsRepository.save(options);
 
         OptionsRequest updateRequest = new OptionsRequest();
-        updateRequest.setId(options.getId());
+        updateRequest.setQuestionId(options.getQuestionId());
         updateRequest.setNewText("no");
         updateRequest.setIsCorrect(false);
 
@@ -72,10 +93,14 @@ public class OptionsServicesImplTest {
 
     @Test
     void testUpdateOptionNotFound() {
+        Options options = new Options();
+        options.setText("yes");
+        options.setQuestionId("123");
+        options.setIsCorrect(true);
+        optionsRepository.save(options);
+
         OptionsRequest updateRequest = new OptionsRequest();
-        updateRequest.setId("12");
-        updateRequest.setNewText("no");
-        updateRequest.setIsCorrect(true);
+        updateRequest.setQuestionId("3333");
 
        Exception exception = assertThrows(OptionsNotFoundException.class, () -> optionsServices.updateOption(updateRequest));
        assertEquals("Option not found", exception.getMessage());
@@ -85,17 +110,36 @@ public class OptionsServicesImplTest {
     void testDeleteOption() {
         Options options = new Options();
         options.setText("yes");
+        options.setQuestionId("1234");
         options.setIsCorrect(true);
         optionsRepository.save(options);
 
-        optionsServices.deleteOption(options.getId());
+        OptionsRequest deleteRequest = new OptionsRequest();
+        deleteRequest.setQuestionId(options.getQuestionId());
+        deleteRequest.setNewText("yes");
+        deleteRequest.setIsCorrect(true);
+
+        optionsServices.deleteOption(deleteRequest);
 
         assertFalse(optionsRepository.existsById(options.getId()));
     }
 
     @Test
     void testDeleteOptionNotFound() {
-        assertThrows(OptionsNotFoundException.class, () -> optionsServices.deleteOption("123"));
+        Options options = new Options();
+        options.setText("yes");
+        options.setQuestionId("123");
+        options.setIsCorrect(true);
+        optionsRepository.save(options);
+
+        OptionsRequest deleteRequest = new OptionsRequest();
+        deleteRequest.setQuestionId("3333");
+        assertThrows(OptionsNotFoundException.class, () -> optionsServices.deleteOption(deleteRequest));
+    }
+    @AfterEach
+    public void tearDown(){
+        optionsRepository.deleteAll();
+
     }
 
 }

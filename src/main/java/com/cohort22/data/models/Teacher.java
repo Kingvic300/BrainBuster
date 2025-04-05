@@ -9,8 +9,10 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "teachers")
+
 public class Teacher extends User {
-    
+
+    private String newUserName;
     private List<String> quizIds;
 
     private List<String> gameIds;
