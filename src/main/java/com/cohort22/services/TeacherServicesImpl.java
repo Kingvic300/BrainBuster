@@ -20,12 +20,7 @@ public class TeacherServicesImpl implements TeacherServices {
 
     @Override
     public TeacherResponse createTeacher(TeacherRequest teacherRequest) {
-        Teacher teacher = new Teacher();
-        teacher.setUsername(teacherRequest.getUsername());
-        teacher.setPassword(teacherRequest.getPassword());
-        teacher.setEmail(teacherRequest.getEmail());
-        teacher.setQuizIds(new ArrayList<>());
-        teacher.setGameIds(new ArrayList<>());
+        Teacher teacher = TeacherMapper.mapToTeacher(teacherRequest);
         teacherRepository.save(teacher);
         return TeacherMapper.mapToTeacherResponse("Teacher Created Successfully", teacher);
     }
@@ -37,7 +32,7 @@ public class TeacherServicesImpl implements TeacherServices {
             throw new TeacherNotFoundException("Teacher not found");
         }
         teacher.get().setEmail(teacherRequest.getEmail());
-        teacher.get().setNewUserName(teacherRequest.getNewUserName());
+        teacher.get().setUsername(teacherRequest.getUsername());
         teacherRepository.save(teacher.get());
         return TeacherMapper.mapToTeacherResponse("Teacher updated successfully", teacher.get());
 

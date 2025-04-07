@@ -9,16 +9,14 @@ import com.cohort22.data.models.Teacher;
 
 import java.util.List;
 
-public class TeacherMapper extends UserMapper {
+public class TeacherMapper{
 
-    public static Teacher mapToTeacher(TeacherRequest teacherRequest, List<String> gameIds,List<String> quiIds) {
+    public static Teacher mapToTeacher(TeacherRequest teacherRequest) {
         Teacher teacher = new Teacher();
         teacher.setUsername(teacherRequest.getUsername());
         teacher.setEmail(teacherRequest.getEmail());
         teacher.setPassword(teacherRequest.getPassword());
         teacher.setRole(teacherRequest.getRole());
-        teacher.setGameIds(gameIds);
-        teacher.setQuizIds(quiIds);
         return teacher;
     }
     public static TeacherResponse mapToTeacherResponse(String message, Teacher teacher) {

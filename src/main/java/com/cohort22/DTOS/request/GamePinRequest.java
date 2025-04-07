@@ -5,6 +5,5 @@ import lombok.Data;
 
 @Data
 public class GamePinRequest {
-    private String gamePin;
     private String gameId;
 }

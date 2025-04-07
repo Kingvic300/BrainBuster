@@ -9,10 +9,10 @@ import com.cohort22.data.models.Options;
 import com.cohort22.data.models.Question;
 
 public class OptionsMapper {
-    public static Options mapToOptions(OptionsRequest optionsRequest, Question question) {
+    public static Options mapToOptions(OptionsRequest optionsRequest) {
         Options options = new Options();
         options.setText(optionsRequest.getNewText());
-        options.setQuestionId(question.getId());
+        options.setQuestionId(optionsRequest.getQuestionId());
         options.setIsCorrect(optionsRequest.getIsCorrect());
         return options;
     }

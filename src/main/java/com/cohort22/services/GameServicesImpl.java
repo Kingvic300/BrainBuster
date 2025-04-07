@@ -161,9 +161,10 @@ public class GameServicesImpl implements GameServices {
     private boolean isCorrectAnswer(String quizId, String answer) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
-        for (String questionId : quiz.getQuestionIds()) {
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new QuestionNotFoundException("Question not found"));
+
+        List<Question> questions = questionRepository.findByQuizId(quizId);
+
+        for (Question question : questions) {
             if (question.getAnswer().equals(answer)) {
                 return true;
             }

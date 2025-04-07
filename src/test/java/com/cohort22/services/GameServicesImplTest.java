@@ -171,36 +171,39 @@ public class GameServicesImplTest {
         Teacher teacher = new Teacher();
         teacher.setUsername("victor");
         teacherRepository.save(teacher);
-        Options options = new Options();
-        options.setText("four");
-        options.setIsCorrect(false);
 
-        Options options1 = new Options();
-        options1.setText("two");
-        options1.setIsCorrect(true);
-        optionsRepository.saveAll(List.of(options,options1));
+        Quiz quiz = new Quiz();
+        quiz.setTitle("Test Quiz");
+        quiz.setTeacherId(teacher.getId());
+        quizRepository.save(quiz);
 
         Question question = new Question();
         question.setName("How many legs do u have");
         question.setAnswer("correct answer");
-        question.setOptions(List.of(options,options1));
+        question.setQuizId(quiz.getId());
         questionRepository.save(question);
 
-        Quiz quiz = new Quiz();
-        quiz.setTitle("Test Quiz");
-        quiz.setQuestionIds(List.of(question.getId()));
-        quiz.setTeacherId(teacher.getId());
-        quizRepository.save(quiz);
+        Options options = new Options();
+        options.setText("four");
+        options.setQuestionId(question.getId());
+        options.setIsCorrect(false);
 
-        Game game = new Game();
-        game.setQuiz(quiz);
-        game.setStatus(GameStatus.IN_PROGRESS);
-        gameRepository.save(game);
+        Options options1 = new Options();
+        options1.setText("two");
+        options1.setQuestionId(question.getId());
+        options1.setIsCorrect(true);
+        optionsRepository.saveAll(List.of(options,options1));
 
         Student student = new Student();
         student.setUsername("victor");
         student.setScore(0);
         studentRepository.save(student);
+
+        Game game = new Game();
+        game.setQuiz(quiz);
+        game.setStatus(GameStatus.IN_PROGRESS);
+        game.setStudents(List.of(student));
+        gameRepository.save(game);
 
         GamePin gamePin = new GamePin();
         gamePin.setPin("1234");

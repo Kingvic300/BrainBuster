@@ -18,10 +18,7 @@ public class OptionsServicesImpl implements OptionsServices {
 
     @Override
     public OptionsResponse createOption(OptionsRequest optionsRequest) {
-        Options options = new Options();
-        options.setQuestionId(optionsRequest.getQuestionId());
-        options.setText(optionsRequest.getNewText());
-        options.setIsCorrect(optionsRequest.getIsCorrect());
+        Options options = OptionsMapper.mapToOptions(optionsRequest);
         optionRepository.save(options);
         return OptionsMapper.mapToOptionsResponse("Options Created Successfully",options);
     }

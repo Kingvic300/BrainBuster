@@ -43,14 +43,7 @@ public class QuestionServicesImpl implements QuestionServices {
 
     @Override
     public QuestionResponse createQuestion(QuestionRequest questions) {
-        Question question = new Question();
-        question.setName(questions.getName());
-        question.setAnswer(questions.getAnswer());
-        question.setQuizId(questions.getQuizId());
-        question.setOptions(new ArrayList<>());
-        if(question.getName().equals(questionRepository.findAll().get(0).getName())) {
-            throw new QuestionNotFoundException("Question name already exists");
-        }
+        Question question = QuestionMapper.mapToQuestion(questions);
         questionRepository.save(question);
 
         return QuestionMapper.mapToQuestionResponse("Question Created", question);

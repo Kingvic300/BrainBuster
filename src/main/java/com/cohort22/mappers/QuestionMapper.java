@@ -10,11 +10,10 @@ import com.cohort22.data.models.Quiz;
 import java.util.List;
 
 public class QuestionMapper {
-    public static Question mapToQuestion(QuestionRequest questionRequest, List<Options> options, Quiz quiz) {
+    public static Question mapToQuestion(QuestionRequest questionRequest) {
         Question question = new Question();
         question.setAnswer(questionRequest.getAnswer());
-        question.setOptions(options);
-        question.setQuizId(quiz.getId());
+        question.setQuizId(questionRequest.getQuizId());
         question.setName(questionRequest.getName());
         return question;
     }

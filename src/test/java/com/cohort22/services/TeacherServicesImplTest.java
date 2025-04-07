@@ -42,7 +42,6 @@ class TeacherServicesImplTest {
 
         TeacherRequest teacherRequest = new TeacherRequest();
         teacherRequest.setUsername("akerele");
-        teacherRequest.setNewUserName("akerel");
 
         TeacherResponse response = teacherServices.updateTeacher(teacherRequest);
         assertNotNull(response);

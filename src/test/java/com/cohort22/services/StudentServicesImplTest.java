@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,13 +48,12 @@ class StudentServicesImplTest {
         studentRepository.save(student);
 
         StudentRequest studentRequest = new StudentRequest();
-        studentRequest.setUsername("vic");
+        studentRequest.setUsername("victor");
 
         StudentResponse response = studentServices.updateStudent(studentRequest);
 
         assertNotNull(student.getId());
         assertEquals("Student updated successfully", response.getMessage());
-        assertEquals("vic", studentRequest.getUsername());
     }
 
     @Test
@@ -88,21 +86,21 @@ class StudentServicesImplTest {
 
     @Test
     void findStudentInGameById() {
-        Game game = new Game();
-        game.setStatus(GameStatus.IN_PROGRESS);
-        gameRepository.save(game);
 
         Student student = new Student();
-        student.setGameId(game.getId());
         student.setUsername("victor");
+        student.setGamePin("1234");
         studentRepository.save(student);
 
+
+        Game game = new Game();
+        game.setStatus(GameStatus.IN_PROGRESS);
         game.setStudents(List.of(student));
         gameRepository.save(game);
 
         StudentRequest studentRequest = new StudentRequest();
+        studentRequest.setGamePin("1234");
         studentRequest.setUsername("victor");
-        studentRequest.setGameId(game.getId());
 
         StudentResponse response = studentServices.findStudentInGameById(studentRequest);
         assertNotNull(student.getId());

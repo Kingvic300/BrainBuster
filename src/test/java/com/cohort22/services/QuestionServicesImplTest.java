@@ -76,9 +76,13 @@ public class QuestionServicesImplTest {
     public void testThatSaveQuestionWorks() {
         Question newQuestion = new Question();
         newQuestion.setName("Why is akerele short");
+        newQuestion.setQuizId("123");
+        newQuestion.setAnswer("!");
         questionRepository.save(newQuestion);
 
         QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setQuizId("123");
+        questionRequest.setAnswer("!");
         questionRequest.setName("Why is akerele short");
 
         QuestionResponse savedQuestion = questionService.createQuestion(questionRequest);

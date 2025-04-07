@@ -10,11 +10,9 @@ import java.util.Set;
 
 
 public class QuizMapper {
-    public static Quiz mapToQuiz(QuizRequest quizRequest, List<String> questionsIds, Teacher teacher, Game games) {
+    public static Quiz mapToQuiz(QuizRequest quizRequest) {
         Quiz quiz = new Quiz();
-        quiz.setQuestionIds(questionsIds);
-        quiz.setTeacherId(teacher.getId());
-        quiz.setGameId(games.getId());
+        quiz.setTeacherId(quizRequest.getTeacherId());
         quiz.setTitle(quizRequest.getTitle());
         return quiz;
     }

@@ -18,5 +18,4 @@ public class Question {
 
     private String quizId;
 
-    private List<Options> options;
 }

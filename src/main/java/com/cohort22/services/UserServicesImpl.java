@@ -1,26 +1,18 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.StudentRequest;
-import com.cohort22.DTOS.request.TeacherRequest;
 import com.cohort22.DTOS.request.UserRequest;
-import com.cohort22.DTOS.response.StudentResponse;
-import com.cohort22.DTOS.response.TeacherResponse;
 import com.cohort22.DTOS.response.UserResponse;
-import com.cohort22.data.models.Student;
-import com.cohort22.data.models.Teacher;
+import com.cohort22.data.enums.Roles;
 import com.cohort22.data.models.User;
 import com.cohort22.data.repositories.StudentRepository;
 import com.cohort22.data.repositories.TeacherRepository;
 import com.cohort22.data.repositories.UserRepository;
-import com.cohort22.exceptions.StudentNotFoundException;
-import com.cohort22.exceptions.TeacherNotFoundException;
 import com.cohort22.exceptions.UserNotFoundException;
-import com.cohort22.mappers.StudentMapper;
-import com.cohort22.mappers.TeacherMapper;
 import com.cohort22.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,11 +29,7 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        User user = new User();
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
-        user.setUsername(userRequest.getUsername());
-        user.setRole(userRequest.getRole());
+        User user = UserMapper.mapToUser(userRequest);
         userRepository.save(user);
         return UserMapper.mapToUserResponse("User Created Successfully", user);
     }
@@ -50,26 +38,14 @@ public class UserServicesImpl implements UserServices {
     public UserResponse deleteUser(UserRequest userRequest) {
         Optional<User> user = userRepository.findByUsername(userRequest.getUsername());
         if (user.isEmpty()) {
-            throw new StudentNotFoundException("Student not found");
+            throw new UserNotFoundException("Student not found");
         }
         userRepository.delete(user.get());
         return UserMapper.mapToUserResponse("User Deleted Successfully", user.get());
     }
 
     @Override
-    public StudentResponse getStudentByName(StudentRequest studentRequest) {
-        Optional<Student> student = studentRepository.findByUsername(studentRequest.getUsername());
-        if (student.isEmpty()) {
-            throw new StudentNotFoundException("Student not found");
-        }
-        return StudentMapper.mapToStudentResponse("Student Found", student.get());
+    public List<User> getUserByRole(Roles role) {
+        return userRepository.getUsersByRole(role);
     }
-
-    @Override
-    public TeacherResponse getTeacherByName(TeacherRequest teacherRequest) {
-        Optional<Teacher> teacher = teacherRepository.findByUsername(teacherRequest.getUsername());
-        if (teacher.isEmpty()) {
-            throw new TeacherNotFoundException("Teacher not found");
-        }
-        return TeacherMapper.mapToTeacherResponse("Teacher Found", teacher.get());    }
 }

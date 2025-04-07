@@ -13,6 +13,7 @@ import com.cohort22.mappers.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,13 +26,7 @@ public class StudentServicesImpl implements StudentServices {
 
     @Override
     public StudentResponse addNewStudent(StudentRequest studentRequest) {
-        Student student = new Student();
-        student.setUsername(studentRequest.getUsername());
-        student.setPassword(studentRequest.getPassword());
-        student.setEmail(studentRequest.getEmail());
-        student.setScore(studentRequest.getTotalScore());
-        student.setGameId(studentRequest.getGameId());
-        student.setRole(studentRequest.getRole());
+        Student student = StudentMapper.mapToStudent(studentRequest);
         studentRepository.save(student);
         return StudentMapper.mapToStudentResponse("Student added successfully", student);
     }
@@ -73,16 +68,19 @@ public class StudentServicesImpl implements StudentServices {
 
     @Override
     public StudentResponse findStudentInGameById(StudentRequest studentRequest) {
-        Optional<Game> game = gameRepository.findById(studentRequest.getGameId());
-        if (game.isEmpty()) {
-            throw new StudentNotFoundException("Game not found");
+        Student student = studentRepository.findByUsername(studentRequest.getUsername())
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+
+        List<Game> studentGames = gameRepository.findByStudentsContaining(student);
+        if (studentGames.isEmpty()) {
+            throw new GameNotActiveException("Game not found");
         }
-        if(game.get().getStatus() != GameStatus.IN_PROGRESS){
+        if(studentGames.getFirst().getStatus() != GameStatus.IN_PROGRESS){
             throw new GameNotActiveException("Game may have been completed");
         }
-        for(Student student : game.get().getStudents()) {
-            if(student.getUsername().equals(studentRequest.getUsername())) {
-                return StudentMapper.mapToStudentResponse("Student Found", student);
+        for(Student students : studentGames.getFirst().getStudents()) {
+            if(students.getUsername().equals(studentRequest.getUsername())) {
+                return StudentMapper.mapToStudentResponse("Student Found", students);
             }
         }
         throw new StudentNotFoundException("Student not found");

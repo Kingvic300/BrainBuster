@@ -2,6 +2,7 @@ package com.cohort22.data.repositories;
 
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.Game;
+import com.cohort22.data.models.Student;
 import com.cohort22.data.models.Teacher;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,6 @@ public interface GameRepository extends MongoRepository<Game, String> {
     Optional<Game> findByTeacher(Teacher teacher);
 
     Optional<Game> findByTeacherId(String teacherId);
+
+    List<Game> findByStudentsContaining(Student student);
 }

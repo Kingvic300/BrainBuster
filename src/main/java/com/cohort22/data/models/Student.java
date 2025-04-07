@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "students")
 public class Student extends User {
-
-    private String gameId;
+    private String newName;
     private int score;
+    private String gamePin;
 }

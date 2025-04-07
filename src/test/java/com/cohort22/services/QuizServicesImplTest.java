@@ -11,7 +11,6 @@ import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.QuestionRepository;
 import com.cohort22.data.repositories.QuizRepository;
 import com.cohort22.data.repositories.TeacherRepository;
-import com.cohort22.exceptions.QuizNotFoundException;
 import com.cohort22.exceptions.TeacherNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,21 +55,12 @@ public class QuizServicesImplTest {
         QuizRequest quizRequest = new QuizRequest();
         quizRequest.setTeacherId(teacher.getId());
         quizRequest.setTitle("Java Basics");
-        quizRequest.setQuestionsId(List.of(question.getId()));
 
         QuizResponse response = quizServices.generateQuiz(quizRequest);
 
         assertNotNull(response);
         assertEquals("Quiz Created Successfully", response.getMessage());
     }
-
-//    @Test
-//    void testGenerateQuiz_TeacherNotFound() {
-//        QuizRequest request = new QuizRequest();
-//        request.setTeacherId("invalid_id");
-//
-//        assertThrows(TeacherNotFoundException.class, () -> quizServices.generateQuiz(request));
-//    }
 
     @Test
     void testUpdateQuiz() {
@@ -89,12 +79,10 @@ public class QuizServicesImplTest {
 
         Quiz quiz = new Quiz();
         quiz.setTitle("Old Title");
-        quiz.setGameId(game.getId());
         quiz.setTeacherId(victor.getId());
         quizRepository.save(quiz);
 
         QuizRequest request = new QuizRequest();
-        request.setGamesId(quiz.getGameId());
         request.setTeacherId(quiz.getTeacherId());
         request.setTitle("New Title");
 
@@ -103,14 +91,6 @@ public class QuizServicesImplTest {
         assertNotNull(response);
         assertEquals("Quiz Updated Successfully", response.getMessage());
     }
-
-//    @Test
-//    void testUpdateQuiz_QuizNotFound() {
-//        QuizRequest request = new QuizRequest();
-//        request.setTitle("Nonexistent Quiz");
-//
-//        assertThrows(QuizNotFoundException.class, () -> quizServices.updateQuiz(request));
-//    }
 
     @Test
     void testDeleteQuiz() {
@@ -121,14 +101,12 @@ public class QuizServicesImplTest {
         Quiz quiz = new Quiz();
         quiz.setTitle("Test Quiz");
         quiz.setTeacherId("123");
-        quiz.setGameId(game.getId());
         quizRepository.save(quiz);
 
 
 
         QuizRequest request = new QuizRequest();
         request.setTeacherId(quiz.getTeacherId());
-        request.setGamesId(quiz.getGameId());
         request.setTitle("Test Quiz");
 
         QuizResponse response = quizServices.deleteQuiz(request);
@@ -136,14 +114,6 @@ public class QuizServicesImplTest {
         assertNotNull(response);
         assertEquals("Quiz Deleted Successfully", response.getMessage());
     }
-
-//    @Test
-//    void testDeleteQuiz_QuizNotFound() {
-//        QuizRequest request = new QuizRequest();
-//        request.setTitle("Nonexistent Quiz");
-//
-//        assertThrows(QuizNotFoundException.class, () -> quizServices.deleteQuiz(request));
-//    }
 
     @Test
     void testGetQuizzesByTeacher() {

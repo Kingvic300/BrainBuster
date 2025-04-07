@@ -17,7 +17,4 @@ public class Quiz {
 
     private String teacherId;
 
-    private List<String> questionIds;
-
-    private String gameId;
 }
