@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.TeacherRequest;
-import com.cohort22.DTOS.response.TeacherResponse;
+import com.cohort22.dtos.request.TeacherRequest;
+import com.cohort22.dtos.response.TeacherResponse;
 import com.cohort22.data.models.Teacher;
 import com.cohort22.data.repositories.TeacherRepository;
 import org.junit.jupiter.api.AfterEach;

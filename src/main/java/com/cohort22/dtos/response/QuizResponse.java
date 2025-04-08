@@ -1,4 +1,4 @@
-package com.cohort22.DTOS.response;
+package com.cohort22.dtos.response;
 
 
 import lombok.Data;

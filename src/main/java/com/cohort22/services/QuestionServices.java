@@ -1,9 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuestionRequest;
-import com.cohort22.DTOS.response.QuestionResponse;
-import com.cohort22.data.models.Question;
-import org.springframework.stereotype.Service;
+import com.cohort22.dtos.request.QuestionRequest;
+import com.cohort22.dtos.response.QuestionResponse;
 
 import java.util.List;
 

@@ -1,9 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.TeacherRequest;
-import com.cohort22.DTOS.response.TeacherResponse;
-import com.cohort22.data.models.Teacher;
-import org.springframework.stereotype.Service;
+import com.cohort22.dtos.request.TeacherRequest;
+import com.cohort22.dtos.response.TeacherResponse;
 
 public interface TeacherServices {
     TeacherResponse createTeacher(TeacherRequest teacherRequest);

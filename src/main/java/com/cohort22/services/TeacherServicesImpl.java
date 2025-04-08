@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.TeacherRequest;
-import com.cohort22.DTOS.response.TeacherResponse;
+import com.cohort22.dtos.request.TeacherRequest;
+import com.cohort22.dtos.response.TeacherResponse;
 import com.cohort22.data.models.Teacher;
 import com.cohort22.data.repositories.TeacherRepository;
 import com.cohort22.exceptions.TeacherNotFoundException;
@@ -9,8 +9,8 @@ import com.cohort22.mappers.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TeacherServicesImpl implements TeacherServices {
@@ -21,6 +21,7 @@ public class TeacherServicesImpl implements TeacherServices {
     @Override
     public TeacherResponse createTeacher(TeacherRequest teacherRequest) {
         Teacher teacher = TeacherMapper.mapToTeacher(teacherRequest);
+        teacher.setId(UUID.randomUUID().toString());
         teacherRepository.save(teacher);
         return TeacherMapper.mapToTeacherResponse("Teacher Created Successfully", teacher);
     }

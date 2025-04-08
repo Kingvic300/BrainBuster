@@ -1,8 +1,8 @@
 package com.cohort22.services;
 
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GameResponse;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GameResponse;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ public interface GameServices {
     GameResponse getCurrentState(GameRequest gameRequest);
     GameResponse endGame(GameRequest gameRequest);
     List<GameResponse> getActiveGames();
-    List<GameResponse> getStudentGameHistory(GameRequest gameRequest);
+    GameResponse getStudentGameHistory(GameRequest gameRequest);
 }

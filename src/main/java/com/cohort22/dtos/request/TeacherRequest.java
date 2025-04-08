@@ -1,4 +1,4 @@
-package com.cohort22.DTOS.request;
+package com.cohort22.dtos.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

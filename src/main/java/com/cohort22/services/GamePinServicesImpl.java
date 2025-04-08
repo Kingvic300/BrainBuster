@@ -1,18 +1,18 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GamePinResponse;
-import com.cohort22.data.models.Game;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GamePinResponse;
 import com.cohort22.data.models.GamePin;
 import com.cohort22.data.repositories.GamePinRepository;
 import com.cohort22.data.repositories.GameRepository;
-import com.cohort22.exceptions.GameNotFoundException;
 import com.cohort22.exceptions.GamePinAlreadyExistsException;
 import com.cohort22.exceptions.GamePinNotFoundException;
 import com.cohort22.mappers.GamePinMapper;
 import com.cohort22.utils.GamePinGeneration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class GamePinServicesImpl implements GamePinServices {
@@ -23,10 +23,7 @@ public class GamePinServicesImpl implements GamePinServices {
     private GameRepository gameRepository;
 
     @Override
-    public GamePinResponse generateGamePin(String gameId) {
-        if (!gameRepository.existsById(gameId)) {
-            throw new GameNotFoundException("Game Not Found");
-        }
+    public GamePinResponse generateGamePin() {
 
         String generatedGamePin = GamePinGeneration.gamePinGenerator();
 
@@ -41,8 +38,8 @@ public class GamePinServicesImpl implements GamePinServices {
         }
 
         GamePin gamePin = new GamePin();
+        gamePin.setId(UUID.randomUUID().toString());
         gamePin.setPin(generatedGamePin);
-        gamePin.setGameId(gameId);
         gamePinRepository.save(gamePin);
 
         return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin);
@@ -50,12 +47,8 @@ public class GamePinServicesImpl implements GamePinServices {
 
     @Override
     public GamePinResponse validateGamePin(GameRequest gameRequest) {
-        GamePin gamePin = gamePinRepository.findByPin(gameRequest.getGamePin())
+        GamePin gamePin = gamePinRepository.findById(gameRequest.getGamePinId())
                 .orElseThrow(() -> new GamePinNotFoundException("Invalid game pin"));
-
-        Game game = gameRepository.findById(gamePin.getGameId())
-                .orElseThrow(() -> new GameNotFoundException("Game not found for the given pin"));
-
 
         return GamePinMapper.mapToGamePinResponse("Game pin validated successfully", gamePin);
     }

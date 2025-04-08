@@ -1,6 +1,8 @@
 package com.cohort22.data.repositories;
 
 import com.cohort22.data.models.Options;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface OptionsRepository extends MongoRepository<Options, String> {
-    Optional<Options> findByQuestionId(String questionId);
+    Optional<Options> findOptionsByText(@NotNull(message = "text can't be null") @NotBlank(message = "text can't be blank") String text);
 }

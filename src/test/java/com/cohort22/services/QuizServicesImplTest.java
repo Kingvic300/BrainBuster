@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuizRequest;
-import com.cohort22.DTOS.response.QuizResponse;
+import com.cohort22.dtos.request.QuizRequest;
+import com.cohort22.dtos.response.QuizResponse;
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Question;
@@ -45,7 +45,7 @@ public class QuizServicesImplTest {
         teacherRepository.save(teacher);
 
         Game game = new Game();
-        game.setTeacher(teacher);
+        game.setTeacherId(teacher.getId());
         gameRepository.save(game);
 
         Question question = new Question();
@@ -73,7 +73,7 @@ public class QuizServicesImplTest {
         teacherRepository.save(teacher);
 
         Game game = new Game();
-        game.setTeacher(teacher);
+        game.setTeacherId(teacher.getId());
         gameRepository.save(game);
 
 

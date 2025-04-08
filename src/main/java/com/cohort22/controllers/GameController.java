@@ -1,13 +1,15 @@
 package com.cohort22.controllers;
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GameResponse;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GameResponse;
 import com.cohort22.services.GameServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/game")
@@ -18,7 +20,7 @@ public class GameController {
 
     @PostMapping("/create")
     public ResponseEntity<GameResponse> createGame(@RequestBody GameRequest gameRequest) {
-        return ResponseEntity.ok(gameServices.createGame(gameRequest));
+        return ResponseEntity.status(CREATED).body(gameServices.createGame(gameRequest));
     }
 
     @PostMapping("/join")
@@ -52,7 +54,7 @@ public class GameController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<GameResponse>> getStudentGameHistory(@RequestBody GameRequest gameRequest) {
+    public ResponseEntity<GameResponse> getStudentGameHistory(@RequestBody GameRequest gameRequest) {
         return ResponseEntity.ok(gameServices.getStudentGameHistory(gameRequest));
     }
 }

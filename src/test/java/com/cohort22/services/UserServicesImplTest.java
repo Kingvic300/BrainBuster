@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.UserRequest;
-import com.cohort22.DTOS.response.UserResponse;
+import com.cohort22.dtos.request.UserRequest;
+import com.cohort22.dtos.response.UserResponse;
 import com.cohort22.data.models.User;
 import com.cohort22.data.repositories.StudentRepository;
 import com.cohort22.data.repositories.TeacherRepository;
@@ -36,7 +36,6 @@ class UserServicesImplTest {
     void testCreateUser() {
         UserRequest request = new UserRequest();
         request.setUsername("victor");
-        request.setPassword("password");
 
         UserResponse response = userServices.createUser(request);
 

@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.StudentRequest;
-import com.cohort22.DTOS.response.StudentResponse;
+import com.cohort22.dtos.request.StudentRequest;
+import com.cohort22.dtos.response.StudentResponse;
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Student;
@@ -95,7 +95,7 @@ class StudentServicesImplTest {
 
         Game game = new Game();
         game.setStatus(GameStatus.IN_PROGRESS);
-        game.setStudents(List.of(student));
+        game.setStudentIds(List.of(student.getId()));
         gameRepository.save(game);
 
         StudentRequest studentRequest = new StudentRequest();
@@ -104,7 +104,7 @@ class StudentServicesImplTest {
 
         StudentResponse response = studentServices.findStudentInGameById(studentRequest);
         assertNotNull(student.getId());
-        assertEquals("Student Found", response.getMessage());
+        assertEquals("Student found in active game", response.getMessage());
     }
     @AfterEach
     public void tearDown(){

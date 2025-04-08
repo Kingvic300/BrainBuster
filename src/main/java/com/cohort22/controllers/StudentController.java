@@ -1,13 +1,11 @@
 package com.cohort22.controllers;
 
-import com.cohort22.DTOS.request.StudentRequest;
-import com.cohort22.DTOS.response.StudentResponse;
+import com.cohort22.dtos.request.StudentRequest;
+import com.cohort22.dtos.response.StudentResponse;
 import com.cohort22.services.StudentServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/student")

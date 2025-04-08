@@ -1,58 +1,51 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GamePinResponse;
-import com.cohort22.DTOS.response.GameResponse;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GamePinResponse;
+import com.cohort22.dtos.response.GameResponse;
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.*;
 import com.cohort22.data.repositories.*;
 import com.cohort22.exceptions.*;
 import com.cohort22.mappers.GameMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GameServicesImpl implements GameServices {
 
-    @Autowired
-    private QuizRepository quizRepository;
-    @Autowired
-    private GameRepository gameRepository;
-    @Autowired
-    private GamePinServices gamePinServices;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private GamePinRepository gamePinRepository;
-
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final QuizRepository quizRepository;
+    private final GameRepository gameRepository;
+    private final GamePinServices gamePinServices;
+    private final StudentRepository studentRepository;
+    private final GamePinRepository gamePinRepository;
+    private final QuestionRepository questionRepository;
+    private final TeacherRepository teacherRepository;
 
     @Override
     public GameResponse createGame(GameRequest gameRequest) {
-        if (gameRequest.getQuizId() == null || gameRequest.getQuizId().isEmpty()) {
-            throw new QuizNotFoundException("Quiz ID must not be empty");
+        if(gameRequest.getTeacherId() == null){
+            throw new TeacherNotFoundException("Teacher not found");
         }
+        Teacher teacher = teacherRepository.findById(gameRequest.getTeacherId())
+                .orElseThrow(() ->  new TeacherNotFoundException("Teacher not found"));
+
         Quiz quiz = quizRepository.findById(gameRequest.getQuizId())
                 .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
 
-        Game game = new Game();
-        game.setQuiz(quiz);
-        game.setStatus(GameStatus.CREATED);
-        gameRepository.save(game);
+        GamePinResponse pinResponse = gamePinServices.generateGamePin();
 
-        GamePinResponse pinResponse = gamePinServices.generateGamePin(game.getId());
         GamePin gamePin = new GamePin();
-        gamePin.setGameId(game.getId());
         gamePin.setPin(pinResponse.getGamePin());
         gamePinRepository.save(gamePin);
 
-        game.setGamePins(Set.of(gamePin));
-        gameRepository.save(game);
 
+        Game game = GameMapper.mapToGame(gameRequest);
+        game.setId(UUID.randomUUID().toString());
+        gameRepository.save(game);
         return GameMapper.mapToGameResponse("Game Created Successfully", game.getStatus());
     }
 
@@ -68,7 +61,7 @@ public class GameServicesImpl implements GameServices {
         Student student = studentRepository.findById(gameRequest.getStudentsId())
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
-        validatedGamePin.getStudents().add(student);
+        validatedGamePin.getStudentIds().add(student.getId());
         gameRepository.save(validatedGamePin);
 
         return GameMapper.mapToGameResponse("Player Joined Successfully", game.get().getStatus());
@@ -82,7 +75,7 @@ public class GameServicesImpl implements GameServices {
         }
 
 
-        if (game.get().getStudents().isEmpty()) {
+        if (game.get().getStudentIds().isEmpty()) {
             throw new StudentNotFoundException("No students found for this game");
         }
         game.get().setStatus(GameStatus.IN_PROGRESS);
@@ -97,7 +90,7 @@ public class GameServicesImpl implements GameServices {
         Student student = studentRepository.findById(gameRequest.getStudentsId())
                 .orElseThrow(() -> new StudentNotFoundException("No student found for this game"));
 
-        if (isCorrectAnswer(gameRequest.getQuizId(), gameRequest.getAnswer())) {
+        if (isCorrectAnswer(gameRequest.getQuizId(), gameRequest.getOptionId())) {
             student.setScore(student.getScore() + 10);
             studentRepository.save(student);
         }
@@ -112,7 +105,7 @@ public class GameServicesImpl implements GameServices {
 
     @Override
     public GameResponse endGame(GameRequest gameRequest) {
-        Game game = gameRepository.findByGamePins_Pin(gameRequest.getGamePin())
+        Game game = gameRepository.findByGamePinId(gameRequest.getGamePinId())
                 .orElseThrow(() -> new GameNotFoundException("No game found for the given pin"));
 
         if (game.getStatus() != GameStatus.IN_PROGRESS) {
@@ -141,31 +134,30 @@ public class GameServicesImpl implements GameServices {
     }
 
     @Override
-    public List<GameResponse> getStudentGameHistory(GameRequest gameRequest) {
-        Student student = studentRepository.findById(gameRequest.getStudentsId())
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+    public GameResponse getStudentGameHistory(GameRequest gameRequest) {
+        Optional<Student> existingStudent = studentRepository.findById(gameRequest.getStudentsId());
+        if(existingStudent.isEmpty()){
+            throw new StudentNotFoundException("Student not found");
+        }
+        Student student = existingStudent.get();
+        Game studentGames = gameRepository.findByStudentIdsContaining(student.getId())
+                .orElseThrow(() -> new  StudentNotFoundInGameException("Student not found in game"));
 
-        List<Game> studentGames = gameRepository.findByStudentsId(student.getId());
-
-        if (studentGames.isEmpty()) {
+        if (studentGames == null) {
             throw new GameNotFoundException("No game history found for this student");
         }
-
-        List<GameResponse> gameResponses = new ArrayList<>();
-        for (Game game : studentGames) {
-            gameResponses.add(GameMapper.mapToGameResponse("Game history retrieved", game.getStatus()));
-        }
-        return gameResponses;
+        studentGames.setStatus(GameStatus.COMPLETED);
+        return GameMapper.mapToGameResponse("Game history retrieved", studentGames.getStatus());
     }
 
-    private boolean isCorrectAnswer(String quizId, String answer) {
+    private boolean isCorrectAnswer(String quizId, String answerId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
 
         List<Question> questions = questionRepository.findByQuizId(quizId);
 
         for (Question question : questions) {
-            if (question.getAnswer().equals(answer)) {
+            if (question.getAnswerId().equals(answerId)) {
                 return true;
             }
         }
@@ -173,10 +165,10 @@ public class GameServicesImpl implements GameServices {
     }
 
     private Game validateGamePin(GameRequest gameRequest) {
-        GamePin gamePin = gamePinRepository.findByPin(gameRequest.getGamePin())
+        GamePin gamePin = gamePinRepository.findById(gameRequest.getGamePinId())
                 .orElseThrow(() -> new GamePinNotFoundException("Invalid game pin"));
 
-        Game game = gameRepository.findById(gamePin.getGameId())
+        Game game = gameRepository.findByGamePinId(gamePin.getId())
                 .orElseThrow(() -> new GameNotFoundException("Game not found for the given pin"));
 
         if (game.getStatus() != GameStatus.IN_PROGRESS) {

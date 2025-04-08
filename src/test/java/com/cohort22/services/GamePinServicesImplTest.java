@@ -1,14 +1,13 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GamePinResponse;
-import com.cohort22.data.models.Game;
 import com.cohort22.data.models.GamePin;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GamePinResponse;
+import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Quiz;
 import com.cohort22.data.repositories.GamePinRepository;
 import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.QuizRepository;
-import com.cohort22.exceptions.GameNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,37 +41,33 @@ public class GamePinServicesImplTest {
 
 
         game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         gameRepository.save(game);
 
 
     }
     @Test
     public void testThatGamePinHasBeenGeneratedSuccessfully() {
-        GamePinResponse generatedGamePin = gamePinServices.generateGamePin(game.getId());
+        GamePinResponse generatedGamePin = gamePinServices.generateGamePin();
         assertNotNull(generatedGamePin);
         assertEquals("Game pin generated successfully", generatedGamePin.getMessage());
     }
     @Test
-    public void testThatGamePinThrowsAnExceptionIfGameNotFound() {
-        assertThrows(GameNotFoundException.class, () -> gamePinServices.generateGamePin("12"));
-    }
-    @Test
-    public void testThatGamePinCanBeValidatedSuccessfully(){
-        GamePinResponse generatedGamePin = gamePinServices.generateGamePin(game.getId());
-        GamePin savedGamePin = gamePinRepository.findByGameId(game.getId()).get();
+    public void testThatGamePinCanBeValidatedSuccessfully() {
+        GamePin gamePin = new GamePin();
+        gamePin.setPin(String.valueOf(gamePinServices.generateGamePin()));
+        gamePinRepository.save(gamePin);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePin(savedGamePin.getPin());
+        gameRequest.setGamePinId(gamePin.getId());
 
         GamePinResponse validateGamePin = gamePinServices.validateGamePin(gameRequest);
-        assertNotNull(generatedGamePin);
-        assertEquals("Game pin generated successfully", generatedGamePin.getMessage());
-        assertNotNull(savedGamePin);
-        assertNotNull(savedGamePin.getPin());
+
+        assertNotNull(gamePin);
         assertNotNull(validateGamePin);
         assertEquals("Game pin validated successfully", validateGamePin.getMessage());
     }
+
 
     @AfterEach
     public void tearDown() {

@@ -13,5 +13,4 @@ public class GamePin {
 
     private String pin;
 
-    private String gameId;
 }

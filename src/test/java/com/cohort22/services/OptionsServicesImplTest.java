@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.OptionsRequest;
-import com.cohort22.DTOS.response.OptionsResponse;
+import com.cohort22.dtos.request.OptionsRequest;
+import com.cohort22.dtos.response.OptionsResponse;
 import com.cohort22.data.models.Options;
 import com.cohort22.data.repositories.OptionsRepository;
 import com.cohort22.exceptions.OptionsNotFoundException;

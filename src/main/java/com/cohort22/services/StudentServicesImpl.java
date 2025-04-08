@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.StudentRequest;
-import com.cohort22.DTOS.response.StudentResponse;
+import com.cohort22.dtos.request.StudentRequest;
+import com.cohort22.dtos.response.StudentResponse;
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Student;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class StudentServicesImpl implements StudentServices {
@@ -27,8 +28,9 @@ public class StudentServicesImpl implements StudentServices {
     @Override
     public StudentResponse addNewStudent(StudentRequest studentRequest) {
         Student student = StudentMapper.mapToStudent(studentRequest);
+        student.setId(UUID.randomUUID().toString());
         studentRepository.save(student);
-        return StudentMapper.mapToStudentResponse("Student added successfully", student);
+        return StudentMapper.mapToStudentResponse("Student added successfully", student, student.getScore());
     }
 
     @Override
@@ -40,7 +42,7 @@ public class StudentServicesImpl implements StudentServices {
         student.get().setUsername(studentRequest.getUsername());
         student.get().setEmail(studentRequest.getEmail());
         studentRepository.save(student.get());
-        return StudentMapper.mapToStudentResponse("Student updated successfully", student.get());
+        return StudentMapper.mapToStudentResponse("Student updated successfully", student.get(), student.get().getScore());
     }
 
     @Override
@@ -50,7 +52,7 @@ public class StudentServicesImpl implements StudentServices {
             throw new StudentNotFoundException("Student not found");
         }
         studentRepository.delete(student.get());
-        return StudentMapper.mapToStudentResponse("deleted Successfully",student.get());
+        return StudentMapper.mapToStudentResponse("deleted Successfully",student.get(), student.get().getScore());
     }
 
     @Override
@@ -63,27 +65,27 @@ public class StudentServicesImpl implements StudentServices {
             throw new StudentNotFoundException("Student not found with this username");
 
         }
-        return StudentMapper.mapToStudentResponse("Student Found", student.get());
+        return StudentMapper.mapToStudentResponse("Student Found", student.get(), student.get().getScore());
     }
 
     @Override
     public StudentResponse findStudentInGameById(StudentRequest studentRequest) {
         Student student = studentRepository.findByUsername(studentRequest.getUsername())
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                .orElseThrow(() -> new StudentNotFoundException(
+                        "Student not found with username: " + studentRequest.getUsername()));
 
-        List<Game> studentGames = gameRepository.findByStudentsContaining(student);
+        List<Game> studentGames = gameRepository.findByStudentIdsContainingAndStatus(student.getId(), GameStatus.IN_PROGRESS);
+
         if (studentGames.isEmpty()) {
-            throw new GameNotActiveException("Game not found");
-        }
-        if(studentGames.getFirst().getStatus() != GameStatus.IN_PROGRESS){
-            throw new GameNotActiveException("Game may have been completed");
-        }
-        for(Student students : studentGames.getFirst().getStudents()) {
-            if(students.getUsername().equals(studentRequest.getUsername())) {
-                return StudentMapper.mapToStudentResponse("Student Found", students);
+            boolean isInAnyGame = gameRepository.existsByStudentIdsContaining(student.getId());
+            if (isInAnyGame) {
+                throw new GameNotActiveException("Game is not currently in progress");
+            } else {
+                throw new GameNotActiveException("Student is not in any game");
             }
         }
-        throw new StudentNotFoundException("Student not found");
+
+        return StudentMapper.mapToStudentResponse("Student found in active game",student, student.getScore());
     }
 
 }

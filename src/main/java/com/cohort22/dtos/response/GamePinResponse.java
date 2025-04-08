@@ -1,6 +1,5 @@
-package com.cohort22.DTOS.response;
+package com.cohort22.dtos.response;
 
-import com.cohort22.data.models.Quiz;
 import lombok.Data;
 
 @Data

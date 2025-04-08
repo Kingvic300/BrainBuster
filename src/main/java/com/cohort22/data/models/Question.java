@@ -13,8 +13,9 @@ public class Question {
     private String id;
 
     @Indexed(unique = true)
-    private String name;
-    private String answer;
+    private String question;
+
+    private String answerId;
 
     private String quizId;
 

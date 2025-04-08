@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuizRequest;
-import com.cohort22.DTOS.response.QuizResponse;
+import com.cohort22.dtos.request.QuizRequest;
+import com.cohort22.dtos.response.QuizResponse;
 import com.cohort22.data.models.*;
 import com.cohort22.data.repositories.*;
 import com.cohort22.exceptions.*;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuizServicesImpl implements QuizServices{
@@ -36,11 +37,8 @@ public class QuizServicesImpl implements QuizServices{
         Teacher teacher = teacherRepository.findById(quizRequest.getTeacherId())
                 .orElseThrow(() -> new TeacherNotFoundException("Teacher not found"));
 
-        Optional<Game> game = gameRepository.findByTeacher(teacher);
-        if (game.isEmpty()) {
-            throw new GameNotFoundException("No game found for this teacher");
-        }
         Quiz quiz = QuizMapper.mapToQuiz(quizRequest);
+        quiz.setId(UUID.randomUUID().toString());
         quizRepository.save(quiz);
         return QuizMapper.mapToQuizResponse("Quiz Created Successfully", quiz);
     }

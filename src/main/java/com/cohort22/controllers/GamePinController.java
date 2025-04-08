@@ -1,8 +1,8 @@
 package com.cohort22.controllers;
 
-import com.cohort22.DTOS.request.GamePinRequest;
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GamePinResponse;
+import com.cohort22.dtos.request.GamePinRequest;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GamePinResponse;
 import com.cohort22.services.GamePinServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class GamePinController {
 
     @PostMapping("/generate-game-pin")
     public ResponseEntity<GamePinResponse> generateGamePin(@RequestBody GamePinRequest gamePinRequest) {
-        return ResponseEntity.ok(gamePinServices.generateGamePin(gamePinRequest.getGameId()));
+        return ResponseEntity.ok(gamePinServices.generateGamePin());
     }
     @PostMapping("/validate-game-pin")
     public ResponseEntity<GamePinResponse> validateGamePin(@RequestBody GameRequest gameRequest) {

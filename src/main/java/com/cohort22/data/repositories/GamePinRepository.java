@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface GamePinRepository extends MongoRepository<GamePin, String> {
 
     Optional<GamePin> findByPin(String gamePin);
-    Optional<GamePin> findByGameId(String id);
     boolean existsByPin(String pin);
 
 }

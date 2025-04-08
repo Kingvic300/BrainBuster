@@ -3,28 +3,24 @@ package com.cohort22.data.models;
 import com.cohort22.data.enums.GameStatus;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Document(collection = "games")
 public class Game {
+
     @Id
     private String id;
 
-    private Set<GamePin> gamePins;
+    private String gamePinId;
 
-    @DBRef
-    private Quiz quiz;
+    private String quizId;
 
-    @DBRef
-    private Teacher teacher;
+    private String teacherId;
 
     private GameStatus status;
 
-    @DBRef
-    private List<Student> students;
+    private List<String> studentIds;
 
 }

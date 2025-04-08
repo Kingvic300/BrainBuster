@@ -1,11 +1,11 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GameResponse;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GameResponse;
 import com.cohort22.data.enums.GameStatus;
 import com.cohort22.data.models.*;
 import com.cohort22.data.repositories.*;
-import com.cohort22.exceptions.QuizNotFoundException;
+import com.cohort22.exceptions.TeacherNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,32 +44,43 @@ public class GameServicesImplTest {
 
     @Test
     public void testThatAGameCanBeCreated(){
+        Teacher teacher = new Teacher();
+        teacher.setUsername("we");
+        teacherRepository.save(teacher);
+
+        Student student = new Student();
+        student.setUsername("we");
+        studentRepository.save(student);
         Quiz quiz = new Quiz();
         quiz.setTitle("Sample Quiz");
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.CREATED);
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePin("123");
+        gameRequest.setGameStatus(GameStatus.CREATED);
+        gameRequest.setGamePinId("123");
         gameRequest.setQuizId(quiz.getId());
+        gameRequest.setTeacherId(teacher.getId());
+        gameRequest.setStudentsId(student.getId());
 
         GameResponse response = gameServices.createGame(gameRequest);
         assertNotNull(response);
         assertEquals("Game Created Successfully", response.getMessage());
         assertEquals(GameStatus.CREATED.toString(), response.getStatus());
 
-        assertNotNull(gameRequest.getGamePin());
+        assertNotNull(gameRequest.getGamePinId());
         assertEquals(GameStatus.CREATED, game.getStatus());
     }
     @Test
     public void testThatGameCreatedThrowsQuizIsNotFoundException(){
 
         GameRequest gameRequest = new GameRequest();
-        assertThrows(QuizNotFoundException.class, () -> gameServices.createGame(gameRequest));
+
+        assertThrows(TeacherNotFoundException.class, () -> gameServices.createGame(gameRequest));
     }
     @Test
     public void testJoinGame() {
@@ -88,21 +98,23 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setTeacherId("!23");
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
-        game.setStudents(List.of(student1, student));
+        game.setStudentIds(List.of(student1.getId(), student.getId()));
         gameRepository.save(game);
 
         GamePin gamePin = new GamePin();
-        gamePin.setGameId(game.getId());
         gamePin.setPin("!234");
         gamePinRepository.save(gamePin);
 
-        game.setGamePins(Set.of(gamePin));
+        game.setGamePinId(gamePin.getId());
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePin(gamePin.getPin());
+        gameRequest.setGameStatus(GameStatus.IN_PROGRESS);
+        gameRequest.setTeacherId(game.getTeacherId());
+        gameRequest.setGamePinId(gamePin.getId());
         gameRequest.setStudentsId(student.getId());
 
         GameResponse response = gameServices.joinGame(gameRequest);
@@ -119,20 +131,18 @@ public class GameServicesImplTest {
 
         studentRepository.saveAll(List.of(student,student2));
 
-        List<Student> studentList = studentRepository.findAll();
         Quiz quiz = new Quiz();
         quiz.setTitle("Test Quiz");
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
-        game.setStudents(studentList);
+        game.setStudentIds(List.of(student.getId(), student2.getId()));
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
         gameRequest.setStudentsId(student.getId());
-        System.out.println(studentList);
 
         GameResponse response = gameServices.startGame(gameRequest);
         assertEquals("Game Started Successfully", response.getMessage());
@@ -145,20 +155,19 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
 
         GamePin gamePin = new GamePin();
         gamePin.setPin("9012");
-        gamePin.setGameId(game.getId());
         gamePinRepository.save(gamePin);
 
-        game.setGamePins(Set.of(gamePin));
+        game.setGamePinId(gamePin.getId());
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePin(gamePin.getPin());
+        gameRequest.setGamePinId(gamePin.getId());
 
         GameResponse response = gameServices.endGame(gameRequest);
 
@@ -200,23 +209,23 @@ public class GameServicesImplTest {
         studentRepository.save(student);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
-        game.setStudents(List.of(student));
+        game.setStudentIds(List.of(student.getId()));
         gameRepository.save(game);
 
         GamePin gamePin = new GamePin();
         gamePin.setPin("1234");
-        gamePin.setGameId(game.getId());
         gamePinRepository.save(gamePin);
 
-        game.setGamePins(Set.of(gamePin));
+        game.setGamePinId(gamePin.getId());
         gameRepository.save(game);
+
         GameRequest gameRequest = new GameRequest();
         gameRequest.setStudentsId(student.getId());
         gameRequest.setQuizId(quiz.getId());
         gameRequest.setAnswer("correct answer");
-        gameRequest.setGamePin(gamePin.getPin());
+        gameRequest.setGamePinId(gamePin.getId());
 
         GameResponse response = gameServices.submitAnswer(gameRequest);
 
@@ -232,20 +241,19 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
 
         GamePin gamePin = new GamePin();
         gamePin.setPin("5678");
-        gamePin.setGameId(game.getId());
         gamePinRepository.save(gamePin);
 
-        game.setGamePins(Set.of(gamePin));
+        game.setGamePinId(gamePin.getId());
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePin(gamePin.getPin());
+        gameRequest.setGamePinId(gamePin.getId());
 
         GameResponse response = gameServices.getCurrentState(gameRequest);
 
@@ -259,7 +267,7 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Game game = new Game();
-        game.setQuiz(quiz);
+        game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
         gameRepository.save(game);
 

@@ -1,9 +1,9 @@
-package com.cohort22.DTOS.response;
+package com.cohort22.dtos.response;
 
 import lombok.Data;
 
 @Data
 public class QuestionResponse {
     private String message;
-    private String answer;
+    private String answerId;
 }

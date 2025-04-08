@@ -1,8 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuizRequest;
-import com.cohort22.DTOS.request.TeacherRequest;
-import com.cohort22.DTOS.response.QuizResponse;
+import com.cohort22.dtos.request.QuizRequest;
+import com.cohort22.dtos.response.QuizResponse;
 
 import java.util.List;
 

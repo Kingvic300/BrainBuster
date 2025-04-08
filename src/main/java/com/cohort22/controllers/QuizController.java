@@ -1,7 +1,7 @@
 package com.cohort22.controllers;
 
-import com.cohort22.DTOS.request.QuizRequest;
-import com.cohort22.DTOS.response.QuizResponse;
+import com.cohort22.dtos.request.QuizRequest;
+import com.cohort22.dtos.response.QuizResponse;
 import com.cohort22.services.QuizServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

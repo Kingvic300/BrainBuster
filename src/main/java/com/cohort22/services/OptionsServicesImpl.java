@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.OptionsRequest;
-import com.cohort22.DTOS.response.OptionsResponse;
+import com.cohort22.dtos.request.OptionsRequest;
+import com.cohort22.dtos.response.OptionsResponse;
 import com.cohort22.data.models.Options;
 import com.cohort22.data.repositories.OptionsRepository;
 import com.cohort22.exceptions.OptionsNotFoundException;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class OptionsServicesImpl implements OptionsServices {
@@ -19,27 +20,19 @@ public class OptionsServicesImpl implements OptionsServices {
     @Override
     public OptionsResponse createOption(OptionsRequest optionsRequest) {
         Options options = OptionsMapper.mapToOptions(optionsRequest);
+        options.setId(UUID.randomUUID().toString());
         optionRepository.save(options);
         return OptionsMapper.mapToOptionsResponse("Options Created Successfully",options);
     }
 
     @Override
-    public OptionsResponse getOptionById(OptionsRequest optionsRequest) {
-        Optional<Options> options = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
-        if(options.isEmpty()){
-            throw new OptionsNotFoundException("Option not found with id");
-        }
-        return OptionsMapper.mapToOptionsResponse("Options Found",options.get());
-    }
-
-    @Override
     public OptionsResponse updateOption(OptionsRequest optionsRequest) {
-        Optional<Options> existingOptions = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
-        if(existingOptions.isEmpty()){
-            throw new OptionsNotFoundException("Option not found");
-        }
+       Optional<Options> existingOptions = optionRepository.findOptionsByText(optionsRequest.getText());
+       if (existingOptions.isEmpty()) {
+           throw new OptionsNotFoundException("Option Not Found");
+       }
         Options options = existingOptions.get();
-        options.setText(optionsRequest.getNewText());
+        options.setText(optionsRequest.getText());
         options.setIsCorrect(optionsRequest.getIsCorrect());
         optionRepository.save(options);
         return OptionsMapper.mapToOptionsResponse("Options Updated Successfully",options);
@@ -47,7 +40,7 @@ public class OptionsServicesImpl implements OptionsServices {
 
     @Override
     public OptionsResponse deleteOption(OptionsRequest optionsRequest) {
-       Optional<Options> options = optionRepository.findByQuestionId(optionsRequest.getQuestionId());
+       Optional<Options> options = optionRepository.findOptionsByText(optionsRequest.getText());
        if(options.isEmpty()){
            throw new OptionsNotFoundException("Option not found with id: ");
        }

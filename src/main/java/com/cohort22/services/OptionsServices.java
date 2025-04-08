@@ -1,14 +1,10 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.OptionsRequest;
-import com.cohort22.DTOS.response.OptionsResponse;
-import com.cohort22.data.models.Options;
-import org.springframework.stereotype.Service;
+import com.cohort22.dtos.request.OptionsRequest;
+import com.cohort22.dtos.response.OptionsResponse;
 
 public interface OptionsServices {
     OptionsResponse createOption(OptionsRequest optionsRequest);
-
-    OptionsResponse getOptionById(OptionsRequest optionsRequest);
 
     OptionsResponse updateOption(OptionsRequest optionsRequest);
 

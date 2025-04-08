@@ -1,12 +1,10 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.GamePinRequest;
-import com.cohort22.DTOS.request.GameRequest;
-import com.cohort22.DTOS.response.GamePinResponse;
-import org.springframework.stereotype.Service;
+import com.cohort22.dtos.request.GameRequest;
+import com.cohort22.dtos.response.GamePinResponse;
 
 public interface GamePinServices {
-    GamePinResponse generateGamePin(String gameId);
+    GamePinResponse generateGamePin();
 
     GamePinResponse validateGamePin(GameRequest gameRequest);
 }

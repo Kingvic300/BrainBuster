@@ -11,6 +11,4 @@ import java.util.List;
 @Document(collection = "teachers")
 
 public class Teacher extends User {
-
-    private String newUserName;
 }

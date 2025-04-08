@@ -1,11 +1,9 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.UserRequest;
-import com.cohort22.DTOS.response.UserResponse;
+import com.cohort22.dtos.request.UserRequest;
+import com.cohort22.dtos.response.UserResponse;
 import com.cohort22.data.enums.Roles;
 import com.cohort22.data.models.User;
-import com.cohort22.data.repositories.StudentRepository;
-import com.cohort22.data.repositories.TeacherRepository;
 import com.cohort22.data.repositories.UserRepository;
 import com.cohort22.exceptions.UserNotFoundException;
 import com.cohort22.mappers.UserMapper;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServicesImpl implements UserServices {
@@ -21,15 +20,10 @@ public class UserServicesImpl implements UserServices {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TeacherRepository teacherRepository;
-
     @Override
     public UserResponse createUser(UserRequest userRequest) {
         User user = UserMapper.mapToUser(userRequest);
+        user.setId(UUID.randomUUID().toString());
         userRepository.save(user);
         return UserMapper.mapToUserResponse("User Created Successfully", user);
     }

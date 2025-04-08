@@ -1,12 +1,8 @@
 package com.cohort22.mappers;
 
-import com.cohort22.DTOS.request.QuizRequest;
-import com.cohort22.DTOS.response.QuizResponse;
+import com.cohort22.dtos.request.QuizRequest;
+import com.cohort22.dtos.response.QuizResponse;
 import com.cohort22.data.models.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 
 public class QuizMapper {

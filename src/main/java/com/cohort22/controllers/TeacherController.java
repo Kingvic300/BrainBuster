@@ -1,7 +1,7 @@
 package com.cohort22.controllers;
 
-import com.cohort22.DTOS.request.TeacherRequest;
-import com.cohort22.DTOS.response.TeacherResponse;
+import com.cohort22.dtos.request.TeacherRequest;
+import com.cohort22.dtos.response.TeacherResponse;
 import com.cohort22.services.TeacherServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

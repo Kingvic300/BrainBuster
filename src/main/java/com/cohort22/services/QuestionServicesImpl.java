@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuestionRequest;
-import com.cohort22.DTOS.response.QuestionResponse;
+import com.cohort22.dtos.request.QuestionRequest;
+import com.cohort22.dtos.response.QuestionResponse;
 import com.cohort22.data.models.Question;
 import com.cohort22.data.repositories.QuestionRepository;
 import com.cohort22.exceptions.QuestionNotFoundException;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class QuestionServicesImpl implements QuestionServices {
@@ -34,7 +35,7 @@ public class QuestionServicesImpl implements QuestionServices {
 
     @Override
     public QuestionResponse getQuestionByName(QuestionRequest questionRequest) {
-        Optional<Question> question = questionRepository.findByName(questionRequest.getName());
+        Optional<Question> question = questionRepository.findByQuestion(questionRequest.getQuestion());
         if (question.isPresent()) {
             return QuestionMapper.mapToQuestionResponse("Question found", question.get());
         }
@@ -44,6 +45,7 @@ public class QuestionServicesImpl implements QuestionServices {
     @Override
     public QuestionResponse createQuestion(QuestionRequest questions) {
         Question question = QuestionMapper.mapToQuestion(questions);
+        question.setId(UUID.randomUUID().toString());
         questionRepository.save(question);
 
         return QuestionMapper.mapToQuestionResponse("Question Created", question);
@@ -52,7 +54,7 @@ public class QuestionServicesImpl implements QuestionServices {
 
     @Override
     public QuestionResponse deleteQuestion(QuestionRequest questions) {
-        Optional<Question> question = questionRepository.findByName(questions.getName());
+        Optional<Question> question = questionRepository.findByQuestion(questions.getQuestion());
         if (question.isPresent()) {
             questionRepository.delete(question.get());
             return QuestionMapper.mapToQuestionResponse("Question deleted",question.get());

@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface QuestionRepository extends MongoRepository<Question, String> {
     List<Question> findByQuizId(String quizId);
 
-    Optional<Question> findByName(String name);
+    Optional<Question> findByQuestion(String name);
 }

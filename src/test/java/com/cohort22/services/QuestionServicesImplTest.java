@@ -1,12 +1,11 @@
 package com.cohort22.services;
 
-import com.cohort22.DTOS.request.QuestionRequest;
-import com.cohort22.DTOS.response.QuestionResponse;
+import com.cohort22.dtos.request.QuestionRequest;
+import com.cohort22.dtos.response.QuestionResponse;
 import com.cohort22.data.models.Question;
 import com.cohort22.data.repositories.QuestionRepository;
 import com.cohort22.exceptions.QuestionNotFoundException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
