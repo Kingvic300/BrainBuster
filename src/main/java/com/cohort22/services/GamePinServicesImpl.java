@@ -1,26 +1,24 @@
 package com.cohort22.services;
 
+import com.cohort22.dtos.request.GamePinRequest;
 import com.cohort22.dtos.request.GameRequest;
 import com.cohort22.dtos.response.GamePinResponse;
 import com.cohort22.data.models.GamePin;
 import com.cohort22.data.repositories.GamePinRepository;
-import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.exceptions.GamePinAlreadyExistsException;
 import com.cohort22.exceptions.GamePinNotFoundException;
 import com.cohort22.mappers.GamePinMapper;
 import com.cohort22.utils.GamePinGeneration;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class GamePinServicesImpl implements GamePinServices {
 
-    @Autowired
-    private GamePinRepository gamePinRepository;
-    @Autowired
-    private GameRepository gameRepository;
+    private final GamePinRepository gamePinRepository;
 
     @Override
     public GamePinResponse generateGamePin() {
@@ -42,14 +40,14 @@ public class GamePinServicesImpl implements GamePinServices {
         gamePin.setPin(generatedGamePin);
         gamePinRepository.save(gamePin);
 
-        return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin);
+        return GamePinMapper.mapToGamePinResponse("Game pin generated successfully", gamePin.getPin());
     }
 
     @Override
-    public GamePinResponse validateGamePin(GameRequest gameRequest) {
-        GamePin gamePin = gamePinRepository.findById(gameRequest.getGamePinId())
+    public GamePinResponse validateGamePin(GamePinRequest gamePinRequest) {
+        GamePin gamePin = gamePinRepository.findByPin(gamePinRequest.getGamePin())
                 .orElseThrow(() -> new GamePinNotFoundException("Invalid game pin"));
 
-        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully", gamePin);
+        return GamePinMapper.mapToGamePinResponse("Game pin validated successfully", gamePin.getPin());
     }
 }

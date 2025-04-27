@@ -3,15 +3,16 @@ package com.cohort22.controllers;
 import com.cohort22.dtos.request.OptionsRequest;
 import com.cohort22.dtos.response.OptionsResponse;
 import com.cohort22.services.OptionsServices;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/options")
+@RequiredArgsConstructor
 public class OptionsController {
-    @Autowired
-    private OptionsServices optionsServices;
+
+    private final OptionsServices optionsServices;
 
     @PostMapping("/create-option")
     public ResponseEntity<OptionsResponse> createOption(@RequestBody OptionsRequest optionsRequest) {

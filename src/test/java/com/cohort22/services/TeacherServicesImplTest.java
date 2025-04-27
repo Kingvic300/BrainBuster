@@ -1,5 +1,6 @@
 package com.cohort22.services;
 
+import com.cohort22.dtos.request.ChangePasswordRequest;
 import com.cohort22.dtos.request.TeacherRequest;
 import com.cohort22.dtos.response.TeacherResponse;
 import com.cohort22.data.models.Teacher;
@@ -20,17 +21,18 @@ class TeacherServicesImplTest {
 
     @Autowired
     private TeacherServices teacherServices;
+
     @Test
     void createTeacher() {
-        Teacher teacher = new Teacher();
-        teacher.setUsername("akerele");
-        teacherRepository.save(teacher);
 
         TeacherRequest teacherRequest = new TeacherRequest();
         teacherRequest.setUsername("akerele");
+        teacherRequest.setPassword("akerele");
+        teacherRequest.setEmail("student@email.com");
         TeacherResponse response = teacherServices.createTeacher(teacherRequest);
+
         assertNotNull(response);
-        assertEquals("akerele", response.getUsername());
+        assertNotNull(response.getJwtToken());
         assertEquals("Teacher Created Successfully", response.getMessage());
     }
 
@@ -38,14 +40,17 @@ class TeacherServicesImplTest {
     void updateTeacher() {
         Teacher teacher = new Teacher();
         teacher.setUsername("akerele");
+        teacher.setPassword("akerele");
         teacherRepository.save(teacher);
 
-        TeacherRequest teacherRequest = new TeacherRequest();
-        teacherRequest.setUsername("akerele");
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setNewPassword("Kingvic");
+        changePasswordRequest.setOldPassword("akerele");
 
-        TeacherResponse response = teacherServices.updateTeacher(teacherRequest);
+
+        TeacherResponse response = teacherServices.changePassword(changePasswordRequest);
         assertNotNull(response);
-        assertEquals("akerele", response.getUsername());
+        assertNotNull(response.getJwtToken());
         assertEquals("Teacher updated successfully", response.getMessage());
     }
 
@@ -73,7 +78,7 @@ class TeacherServicesImplTest {
 
         TeacherResponse response = teacherServices.getTeacherByName(teacherRequest);
         assertNotNull(response);
-        assertEquals("akerele", response.getUsername());
+        assertNotNull(response.getJwtToken());
         assertEquals("Teacher Found", response.getMessage());
     }
     @AfterEach

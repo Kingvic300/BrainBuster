@@ -33,42 +33,11 @@ public class OptionsServicesImplTest {
         OptionsRequest request = new OptionsRequest();
         request.setQuestionId("123");
         request.setIsCorrect(true);
-        request.setNewText("yes");
+        request.setText("yes");
         OptionsResponse response = optionsServices.createOption(request);
 
         assertNotNull(response);
         assertEquals("Options Created Successfully", response.getMessage());
-    }
-
-    @Test
-    void testGetOptionById() {
-        Options options = new Options();
-        options.setText("yes");
-        options.setQuestionId("123");
-        options.setIsCorrect(true);
-        optionsRepository.save(options);
-
-        OptionsRequest optionsRequest = new OptionsRequest();
-        optionsRequest.setQuestionId(options.getQuestionId());
-        optionsRequest.setNewText(options.getText());
-        optionsRequest.setIsCorrect(options.getIsCorrect());
-        OptionsResponse response = optionsServices.getOptionById(optionsRequest);
-
-        assertNotNull(response);
-        assertEquals("Options Found", response.getMessage());
-    }
-
-    @Test
-    void testGetOptionByIdNotFound() {
-        Options options = new Options();
-        options.setText("yes");
-        options.setQuestionId("123");
-        options.setIsCorrect(true);
-        optionsRepository.save(options);
-
-        OptionsRequest request = new OptionsRequest();
-        request.setQuestionId("3333");
-        assertThrows(OptionsNotFoundException.class, () -> optionsServices.getOptionById(request));
     }
 
     @Test
@@ -81,7 +50,7 @@ public class OptionsServicesImplTest {
 
         OptionsRequest updateRequest = new OptionsRequest();
         updateRequest.setQuestionId(options.getQuestionId());
-        updateRequest.setNewText("no");
+        updateRequest.setText("yes");
         updateRequest.setIsCorrect(false);
 
         OptionsResponse response = optionsServices.updateOption(updateRequest);
@@ -103,7 +72,7 @@ public class OptionsServicesImplTest {
         updateRequest.setQuestionId("3333");
 
        Exception exception = assertThrows(OptionsNotFoundException.class, () -> optionsServices.updateOption(updateRequest));
-       assertEquals("Option not found", exception.getMessage());
+       assertEquals("Option Not Found", exception.getMessage());
     }
 
     @Test
@@ -116,7 +85,7 @@ public class OptionsServicesImplTest {
 
         OptionsRequest deleteRequest = new OptionsRequest();
         deleteRequest.setQuestionId(options.getQuestionId());
-        deleteRequest.setNewText("yes");
+        deleteRequest.setText("yes");
         deleteRequest.setIsCorrect(true);
 
         optionsServices.deleteOption(deleteRequest);

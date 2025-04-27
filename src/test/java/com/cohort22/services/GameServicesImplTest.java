@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,13 +26,10 @@ public class GameServicesImplTest {
 
     @Autowired
     private GameServices gameServices;
-
     @Autowired
     private QuizRepository quizRepository;
-
     @Autowired
     private GamePinRepository gamePinRepository;
-
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -79,7 +77,7 @@ public class GameServicesImplTest {
     public void testThatGameCreatedThrowsQuizIsNotFoundException(){
 
         GameRequest gameRequest = new GameRequest();
-
+        gameRequest.setTeacherId("12");
         assertThrows(TeacherNotFoundException.class, () -> gameServices.createGame(gameRequest));
     }
     @Test
@@ -123,6 +121,9 @@ public class GameServicesImplTest {
     }
     @Test
     public void testStartGame() {
+        Teacher teacher = new Teacher();
+        teacher.setPassword("password");
+        teacherRepository.save(teacher);
         Student student = new Student();
         student.setUsername("victor");
 
@@ -136,12 +137,14 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Game game = new Game();
+        game.setTeacherId(teacher.getId());
         game.setQuizId(quiz.getId());
         game.setStatus(GameStatus.IN_PROGRESS);
         game.setStudentIds(List.of(student.getId(), student2.getId()));
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
+        gameRequest.setTeacherId(teacher.getId());
         gameRequest.setStudentsId(student.getId());
 
         GameResponse response = gameServices.startGame(gameRequest);
@@ -187,8 +190,7 @@ public class GameServicesImplTest {
         quizRepository.save(quiz);
 
         Question question = new Question();
-        question.setName("How many legs do u have");
-        question.setAnswer("correct answer");
+        question.setQuestion("How many legs do u have");
         question.setQuizId(quiz.getId());
         questionRepository.save(question);
 
@@ -222,16 +224,16 @@ public class GameServicesImplTest {
         gameRepository.save(game);
 
         GameRequest gameRequest = new GameRequest();
+        gameRequest.setOptionId(options1.getId());
         gameRequest.setStudentsId(student.getId());
         gameRequest.setQuizId(quiz.getId());
-        gameRequest.setAnswer("correct answer");
         gameRequest.setGamePinId(gamePin.getId());
 
         GameResponse response = gameServices.submitAnswer(gameRequest);
 
-        Student updatedStudent = studentRepository.findById(student.getId()).orElseThrow();
+        Optional<Student> updatedStudent = studentRepository.findById(gameRequest.getStudentsId());
 
-        assertEquals(10, updatedStudent.getScore());
+        assertEquals(10, updatedStudent.get().getScore());
         assertEquals("Answer has been submitted", response.getMessage());
     }
     @Test

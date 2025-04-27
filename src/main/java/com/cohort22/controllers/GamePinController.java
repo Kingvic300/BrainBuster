@@ -4,26 +4,25 @@ import com.cohort22.dtos.request.GamePinRequest;
 import com.cohort22.dtos.request.GameRequest;
 import com.cohort22.dtos.response.GamePinResponse;
 import com.cohort22.services.GamePinServices;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/game-pin")
+@RequiredArgsConstructor
 public class GamePinController {
-    @Autowired
-    private GamePinServices gamePinServices;
+
+    private final GamePinServices gamePinServices;
 
     @PostMapping("/generate-game-pin")
-    public ResponseEntity<GamePinResponse> generateGamePin(@RequestBody GamePinRequest gamePinRequest) {
+    public ResponseEntity<GamePinResponse> generateGamePin() {
         return ResponseEntity.ok(gamePinServices.generateGamePin());
     }
     @PostMapping("/validate-game-pin")
-    public ResponseEntity<GamePinResponse> validateGamePin(@RequestBody GameRequest gameRequest) {
-        return ResponseEntity.ok(gamePinServices.validateGamePin(gameRequest));
+    public ResponseEntity<GamePinResponse> validateGamePin(@RequestBody GamePinRequest gamePinRequest) {
+        return ResponseEntity.ok(gamePinServices.validateGamePin(gamePinRequest));
     }
 
 }

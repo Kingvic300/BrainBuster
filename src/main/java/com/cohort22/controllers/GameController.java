@@ -3,7 +3,7 @@ package com.cohort22.controllers;
 import com.cohort22.dtos.request.GameRequest;
 import com.cohort22.dtos.response.GameResponse;
 import com.cohort22.services.GameServices;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +11,13 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+
 @RestController
 @RequestMapping("/game")
+@RequiredArgsConstructor
 public class GameController {
 
-    @Autowired
-    private GameServices gameServices;
+    private final GameServices gameServices;
 
     @PostMapping("/create")
     public ResponseEntity<GameResponse> createGame(@RequestBody GameRequest gameRequest) {

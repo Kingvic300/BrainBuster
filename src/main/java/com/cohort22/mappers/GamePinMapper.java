@@ -11,10 +11,10 @@ public class GamePinMapper {
         gamePin.setPin(gamePinRequest.getGamePin());
         return gamePin;
     }
-    public static GamePinResponse mapToGamePinResponse(String message, GamePin gamePin) {
+    public static GamePinResponse mapToGamePinResponse(String message, String gamePin) {
         GamePinResponse gamePinResponse = new GamePinResponse();
         gamePinResponse.setMessage(message);
-        gamePinResponse.setGamePin(gamePin.getPin());
+        gamePinResponse.setGamePin(gamePin);
         return gamePinResponse;
     }
 }

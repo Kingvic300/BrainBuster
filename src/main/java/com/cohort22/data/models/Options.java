@@ -14,4 +14,5 @@ public class Options {
     @Indexed(unique = true)
     private String text;
     private Boolean isCorrect;
+    private String questionId;
 }

@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface GameServices {
     GameResponse createGame(GameRequest gameRequest);
+
+    GameResponse changeGamePin(GameRequest gameRequest);
+
     GameResponse joinGame(GameRequest gameRequest);
     GameResponse startGame(GameRequest gameRequest);
     GameResponse submitAnswer(GameRequest gameRequest);

@@ -9,12 +9,13 @@ public class OptionsMapper {
         Options options = new Options();
         options.setText(optionsRequest.getText());
         options.setIsCorrect(optionsRequest.getIsCorrect());
+        options.setQuestionId(optionsRequest.getQuestionId());
         return options;
     }
-    public static OptionsResponse mapToOptionsResponse(String message, Options options) {
+    public static OptionsResponse mapToOptionsResponse(String message, String text) {
         OptionsResponse optionsResponse = new OptionsResponse();
         optionsResponse.setMessage(message);
-        optionsResponse.setAnswerText(options.getText());
+        optionsResponse.setAnswerText(text);
         return optionsResponse;
     }
 }

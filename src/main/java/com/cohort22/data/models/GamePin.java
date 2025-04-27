@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class GamePin {
     @Id
     private String id;
-
     private String pin;
 
 }

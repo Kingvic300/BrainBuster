@@ -8,10 +8,7 @@ import java.util.List;
 
 public interface QuizServices {
     QuizResponse generateQuiz(QuizRequest quizRequest);
-
     QuizResponse updateQuiz(QuizRequest quizRequest);
-
     QuizResponse deleteQuiz(QuizRequest quizRequest);
-
     List<QuizResponse> getQuizzesByTeacher(QuizRequest quizRequest);
 }

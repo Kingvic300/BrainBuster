@@ -6,23 +6,24 @@ import com.cohort22.data.models.Options;
 import com.cohort22.data.repositories.OptionsRepository;
 import com.cohort22.exceptions.OptionsNotFoundException;
 import com.cohort22.mappers.OptionsMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OptionsServicesImpl implements OptionsServices {
-    @Autowired
-    private OptionsRepository optionRepository;
+
+    private final OptionsRepository optionRepository;
 
     @Override
     public OptionsResponse createOption(OptionsRequest optionsRequest) {
         Options options = OptionsMapper.mapToOptions(optionsRequest);
         options.setId(UUID.randomUUID().toString());
         optionRepository.save(options);
-        return OptionsMapper.mapToOptionsResponse("Options Created Successfully",options);
+        return OptionsMapper.mapToOptionsResponse("Options Created Successfully",options.toString());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class OptionsServicesImpl implements OptionsServices {
         options.setText(optionsRequest.getText());
         options.setIsCorrect(optionsRequest.getIsCorrect());
         optionRepository.save(options);
-        return OptionsMapper.mapToOptionsResponse("Options Updated Successfully",options);
+        return OptionsMapper.mapToOptionsResponse("Options Updated Successfully",options.getText());
     }
 
     @Override
@@ -45,6 +46,6 @@ public class OptionsServicesImpl implements OptionsServices {
            throw new OptionsNotFoundException("Option not found with id: ");
        }
        optionRepository.delete(options.get());
-       return OptionsMapper.mapToOptionsResponse("Options Deleted Successfully",options.get());
+       return OptionsMapper.mapToOptionsResponse("Options Deleted Successfully",options.get().getText());
     }
 }

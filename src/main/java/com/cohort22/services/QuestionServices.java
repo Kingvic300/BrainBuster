@@ -7,10 +7,7 @@ import java.util.List;
 
 public interface QuestionServices {
     List<QuestionResponse> getAllQuestions();
-
     QuestionResponse getQuestionByName(QuestionRequest questionRequest);
-
     QuestionResponse createQuestion(QuestionRequest questions);
-
     QuestionResponse deleteQuestion(QuestionRequest questions);
 }

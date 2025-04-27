@@ -36,12 +36,14 @@ class UserServicesImplTest {
     void testCreateUser() {
         UserRequest request = new UserRequest();
         request.setUsername("victor");
+        request.setPassword("passw");
+        request.setEmail("student@email.com");
 
         UserResponse response = userServices.createUser(request);
 
         assertNotNull(response);
         assertEquals("User Created Successfully", response.getMessage());
-        assertEquals("victor", response.getUsername());
+        assertNotNull(response.getJwtToken());
     }
 
     @Test
@@ -57,7 +59,7 @@ class UserServicesImplTest {
 
         assertNotNull(response);
         assertEquals("User Deleted Successfully", response.getMessage());
-        assertEquals("victor", response.getUsername());
+        assertNotNull(response.getJwtToken());
     }
 
     @Test

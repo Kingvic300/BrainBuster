@@ -10,7 +10,8 @@ import java.util.List;
 public interface UserServices {
     UserResponse createUser(UserRequest userRequest);
 
-    UserResponse deleteUser(UserRequest userRequest);
+    UserResponse loginUser(UserRequest userRequest);
 
+    UserResponse deleteUser(UserRequest userRequest);
     List<User> getUserByRole(Roles role);
 }

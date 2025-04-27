@@ -15,4 +15,8 @@ public class OptionsRequest {
     @NotBlank(message = "IsCorrect can't be blank")
     private Boolean IsCorrect;
 
+    @NotNull(message = "questionId can't be null")
+    @NotBlank(message = "questionId can't be blank")
+    private String questionId;
+
 }

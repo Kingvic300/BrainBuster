@@ -12,10 +12,10 @@ public class QuizMapper {
         quiz.setTitle(quizRequest.getTitle());
         return quiz;
     }
-    public static QuizResponse mapToQuizResponse(String message, Quiz quiz) {
+    public static QuizResponse mapToQuizResponse(String message, String title) {
         QuizResponse quizResponse = new QuizResponse();
         quizResponse.setMessage(message);
-        quizResponse.setQuizName(quiz.getTitle());
+        quizResponse.setQuizName(title);
         return quizResponse;
     }
 }

@@ -1,6 +1,7 @@
 package com.cohort22.services;
 
 import com.cohort22.data.models.GamePin;
+import com.cohort22.dtos.request.GamePinRequest;
 import com.cohort22.dtos.request.GameRequest;
 import com.cohort22.dtos.response.GamePinResponse;
 import com.cohort22.data.models.Game;
@@ -58,10 +59,10 @@ public class GamePinServicesImplTest {
         gamePin.setPin(String.valueOf(gamePinServices.generateGamePin()));
         gamePinRepository.save(gamePin);
 
-        GameRequest gameRequest = new GameRequest();
-        gameRequest.setGamePinId(gamePin.getId());
+        GamePinRequest gamePinRequest = new GamePinRequest();
+        gamePinRequest.setGamePin(gamePin.getPin());
 
-        GamePinResponse validateGamePin = gamePinServices.validateGamePin(gameRequest);
+        GamePinResponse validateGamePin = gamePinServices.validateGamePin(gamePinRequest);
 
         assertNotNull(gamePin);
         assertNotNull(validateGamePin);

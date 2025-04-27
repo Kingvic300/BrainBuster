@@ -10,5 +10,4 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "students")
 public class Student extends User {
     private int score;
-    private String gamePin;
 }

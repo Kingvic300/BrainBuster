@@ -4,17 +4,20 @@ import com.cohort22.dtos.request.QuestionRequest;
 import com.cohort22.dtos.response.QuestionResponse;
 import com.cohort22.services.QuestionServices;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/question")
+@RequiredArgsConstructor
 public class QuestionController {
-    @Autowired
-    private QuestionServices questionServices;
+
+    private final QuestionServices questionServices;
 
     @PostMapping("/create-question")
     public ResponseEntity<QuestionResponse> createQuestion(@RequestBody @Valid QuestionRequest questionRequest) {

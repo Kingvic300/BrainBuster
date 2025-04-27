@@ -6,6 +6,7 @@ import com.cohort22.data.models.*;
 import com.cohort22.data.repositories.*;
 import com.cohort22.exceptions.*;
 import com.cohort22.mappers.QuizMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,22 +16,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class QuizServicesImpl implements QuizServices{
 
-    @Autowired
-    private QuizRepository quizRepository;
-
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private TeacherRepository teacherRepository;
-
-    @Autowired
-    private GameRepository gameRepository;
-    @Autowired
-    private GamePinRepository gamePinRepository;
-
+    private final QuizRepository quizRepository;
+    private final TeacherRepository teacherRepository;
 
     @Override
     public QuizResponse generateQuiz(QuizRequest quizRequest) {
@@ -40,7 +30,7 @@ public class QuizServicesImpl implements QuizServices{
         Quiz quiz = QuizMapper.mapToQuiz(quizRequest);
         quiz.setId(UUID.randomUUID().toString());
         quizRepository.save(quiz);
-        return QuizMapper.mapToQuizResponse("Quiz Created Successfully", quiz);
+        return QuizMapper.mapToQuizResponse("Quiz Created Successfully", quiz.getTitle());
     }
     @Override
     public QuizResponse updateQuiz(QuizRequest quizRequest) {
@@ -51,7 +41,7 @@ public class QuizServicesImpl implements QuizServices{
         quiz.get().setTitle(quizRequest.getTitle());
         quizRepository.save(quiz.get());
 
-        return QuizMapper.mapToQuizResponse("Quiz Updated Successfully", quiz.get());
+        return QuizMapper.mapToQuizResponse("Quiz Updated Successfully", quiz.get().getTitle());
     }
 
     @Override
@@ -61,7 +51,7 @@ public class QuizServicesImpl implements QuizServices{
             throw new QuizNotFoundException("Quiz not found");
         }
         quizRepository.delete(quiz.get());
-        return QuizMapper.mapToQuizResponse("Quiz Deleted Successfully", quiz.get());
+        return QuizMapper.mapToQuizResponse("Quiz Deleted Successfully", quiz.get().getTitle());
     }
 
 
@@ -78,7 +68,7 @@ public class QuizServicesImpl implements QuizServices{
 
         List<QuizResponse> quizzesResponse = new ArrayList<>();
         for (Quiz quiz : quizzes) {
-            quizzesResponse.add(QuizMapper.mapToQuizResponse("Quiz Found", quiz));
+            quizzesResponse.add(QuizMapper.mapToQuizResponse("Quiz Found", quiz.getTitle()));
         }
 
         return quizzesResponse;

@@ -49,7 +49,7 @@ public class QuizServicesImplTest {
         gameRepository.save(game);
 
         Question question = new Question();
-        question.setName("What is Java?");
+        question.setQuestion("What is Java?");
         questionRepository.save(question);
 
         QuizRequest quizRequest = new QuizRequest();

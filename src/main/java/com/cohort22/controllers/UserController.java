@@ -5,7 +5,7 @@ import com.cohort22.dtos.response.UserResponse;
 import com.cohort22.data.enums.Roles;
 import com.cohort22.data.models.User;
 import com.cohort22.services.UserServices;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,14 +13,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserServices userServices;
+
+    private final UserServices userServices;
 
     @PostMapping("/create-user")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
-        System.out.println(userRequest.getUsername());
         return ResponseEntity.ok(userServices.createUser(userRequest));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> login(@RequestBody UserRequest userRequest) {
+        return ResponseEntity.ok(userServices.loginUser(userRequest));
     }
     @DeleteMapping("/delete-user")
     public ResponseEntity<UserResponse> deleteUser(@RequestBody UserRequest userRequest) {

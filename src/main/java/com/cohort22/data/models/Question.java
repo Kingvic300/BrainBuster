@@ -15,8 +15,6 @@ public class Question {
     @Indexed(unique = true)
     private String question;
 
-    private String answerId;
-
     private String quizId;
 
 }

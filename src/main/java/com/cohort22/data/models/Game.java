@@ -12,15 +12,10 @@ public class Game {
 
     @Id
     private String id;
-
     private String gamePinId;
-
     private String quizId;
-
     private String teacherId;
-
     private GameStatus status;
-
     private List<String> studentIds;
 
 }

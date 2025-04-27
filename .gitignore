@@ -8,6 +8,9 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+!/src/main/resources/application.properties
+/src/test/resources/application-test.properties
+
 *.iws
 *.iml
 *.ipr
