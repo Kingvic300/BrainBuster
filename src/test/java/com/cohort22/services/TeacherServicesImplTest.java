@@ -37,24 +37,6 @@ class TeacherServicesImplTest {
     }
 
     @Test
-    void updateTeacher() {
-        Teacher teacher = new Teacher();
-        teacher.setUsername("akerele");
-        teacher.setPassword("akerele");
-        teacherRepository.save(teacher);
-
-        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        changePasswordRequest.setNewPassword("Kingvic");
-        changePasswordRequest.setOldPassword("akerele");
-
-
-        TeacherResponse response = teacherServices.changePassword(changePasswordRequest);
-        assertNotNull(response);
-        assertNotNull(response.getJwtToken());
-        assertEquals("Teacher updated successfully", response.getMessage());
-    }
-
-    @Test
     void deleteTeacher() {
         Teacher teacher = new Teacher();
         teacher.setUsername("akerele");

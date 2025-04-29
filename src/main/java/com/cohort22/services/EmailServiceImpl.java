@@ -1,53 +1,59 @@
 package com.cohort22.services;
 
 import com.cohort22.exceptions.EmailNotSentException;
+import com.cohort22.utils.JwtUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-
 
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-    private final static Logger LOGGER =  LoggerFactory.getLogger(EmailService.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
     private final JavaMailSender mailSender;
+    private final JwtUtil jwtUtil;
 
     @Override
     @Async
-    public void sendEmail(String to, String email) {
-        try{
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            helper.setText(email, true);
-            helper.setTo(to);
-            helper.setSubject("Confirm your email");
-            helper.setFrom("oladimejivictor611@gmail.com");
-        }catch (MessagingException e){
-            LOGGER.error("failed to send email", e);
-            throw new EmailNotSentException("failed to send email");
-        }
+    public void sendEmail(String to, String emailContent) {
+        sendMimeEmail(to, "Confirm your email", emailContent);
     }
+
+    @Override
+    @Async
     public void sendResetPasswordEmail(String toEmail, String resetUrl) {
+        String emailContent = "<p>Hello,</p>" +
+                "<p>Click the link below to reset your password:</p>" +
+                "<p><a href=\"" + resetUrl + "\">Reset Password</a></p>" +
+                "<p>This link will expire in 30 minutes.</p>";
+
+        sendMimeEmail(toEmail, "Reset Your Password", emailContent);
+    }
+
+    private void sendMimeEmail(String to, String subject, String content) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(toEmail);
-            helper.setSubject("Reset Your Password");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            String emailContent = "Click the link below to reset your password:\n\n" + resetUrl;
-            helper.setText(emailContent);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+            helper.setFrom("oladimejivictor611@gmail.com");
 
             mailSender.send(mimeMessage);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to send email", e);
+            LOGGER.info("Email sent to {}", to);
+
+        } catch (MessagingException | MailException e) {
+            LOGGER.error("Failed to send email to {}: {}", to, e.getMessage());
+            throw new EmailNotSentException("Failed to send email. Please try again later.");
         }
     }
 }

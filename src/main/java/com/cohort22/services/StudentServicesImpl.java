@@ -1,6 +1,7 @@
 package com.cohort22.services;
 
 import com.cohort22.dtos.request.ChangePasswordRequest;
+import com.cohort22.dtos.request.ResetPasswordRequest;
 import com.cohort22.dtos.request.StudentRequest;
 import com.cohort22.dtos.response.StudentResponse;
 import com.cohort22.data.enums.GameStatus;
@@ -8,10 +9,7 @@ import com.cohort22.data.models.Game;
 import com.cohort22.data.models.Student;
 import com.cohort22.data.repositories.GameRepository;
 import com.cohort22.data.repositories.StudentRepository;
-import com.cohort22.exceptions.AlreadyExistsException;
-import com.cohort22.exceptions.GameNotActiveException;
-import com.cohort22.exceptions.StudentNotFoundException;
-import com.cohort22.exceptions.UserNotFoundException;
+import com.cohort22.exceptions.*;
 import com.cohort22.mappers.StudentMapper;
 import com.cohort22.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,7 @@ public class StudentServicesImpl implements StudentServices {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    private final EmailServiceImpl emailServiceImpl;
+    private final EmailService emailService;
 
     @Override
     public StudentResponse addNewStudent(StudentRequest studentRequest) {
@@ -53,13 +51,13 @@ public class StudentServicesImpl implements StudentServices {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
         Optional<Student> email = studentRepository.findByEmail(userRequest.getEmail());
         if (email.isEmpty()) {
-            throw new StudentNotFoundException("Student not found");
+            throw new EmailNotFoundException("Email not found");
         }
         Student user = studentRepository.findByUsername(userRequest.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User Not Found"));
+                .orElseThrow(() -> new UserNotFoundException("UserName Not Found"));
 
         if (!passwordEncoder.matches(userRequest.getPassword(), user.getPassword())) {
-            throw new UserNotFoundException("Invalid Credentials");
+            throw new StudentNotFoundException("Invalid Credentials");
         }
         var jwtToken = jwtUtil.generateToken(user);
         return StudentMapper.mapToStudentResponse("User Found",  jwtToken);
@@ -72,19 +70,23 @@ public class StudentServicesImpl implements StudentServices {
         if (student.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }
+        if(student.get().getPassword().equals(changePasswordRequest.getNewPassword())){
+            throw new PasswordMatchesException("Password matches old password");
+        }
         student.get().setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         studentRepository.save(student.get());
-        return StudentMapper.mapToStudentResponse("Student Reset Password", changePasswordRequest.getToken());
+        return StudentMapper.mapToStudentResponse("Student Reset Password successful", changePasswordRequest.getToken());
     }
     @Override
-    public void sendResetLink(String email){
-        Optional<Student> student = studentRepository.findByEmail(email);
+    public void sendResetLink(ResetPasswordRequest resetPasswordRequest){
+        Optional<Student> student = studentRepository.findByEmail(resetPasswordRequest.getEmail());
         if (student.isEmpty()) {
             throw new StudentNotFoundException("Student not found");
         }
-        String token = jwtUtil.generateResetToken(email);
-        String restLink = "http://localhost:8080/student/reset-password?token=" + token;
-        emailServiceImpl.sendResetPasswordEmail(email, restLink);
+        String token = jwtUtil.generateResetToken(resetPasswordRequest.getEmail());
+        String restLink = "http://localhost:301/student/reset-password/";
+        String url = restLink + token;
+        emailService.sendResetPasswordEmail(resetPasswordRequest.getEmail(), url);
         StudentMapper.mapToStudentResponse("Sent successfully", token);
     }
 

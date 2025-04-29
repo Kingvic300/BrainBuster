@@ -33,7 +33,11 @@ public class SecurityConfiguration {
                                 "/teacher/login",
                                 "/teacher/create-teacher",
                                 "/student/login",
-                                "/student/create-students").permitAll()
+                                "/student/create-students",
+                                "/teacher/reset-password",
+                                "/student/reset-password",
+                                "/student/send-reset-email",
+                                "/teacher/send-reset-email").permitAll()
                         .anyRequest()
                         .hasAnyRole("TEACHER", "STUDENT")
                 )

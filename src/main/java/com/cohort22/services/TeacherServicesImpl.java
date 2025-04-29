@@ -75,8 +75,9 @@ public class TeacherServicesImpl implements TeacherServices {
             throw new TeacherNotFoundException("Student not found");
         }
         String token = jwtUtil.generateResetToken(email);
-        String restLink = "http://localhost:8080/teacher/reset-password?token=" + token;
-        emailService.sendResetPasswordEmail(email, restLink);
+        String restLink = "http://localhost:8080/teacher/reset-password";
+        String url = restLink + token;
+        emailService.sendResetPasswordEmail(email, url);
         TeacherMapper.mapToTeacherResponse("Teacher Reset Link Sent", token);
     }
 

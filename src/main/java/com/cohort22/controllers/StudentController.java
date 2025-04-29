@@ -1,6 +1,7 @@
 package com.cohort22.controllers;
 
 import com.cohort22.dtos.request.ChangePasswordRequest;
+import com.cohort22.dtos.request.ResetPasswordRequest;
 import com.cohort22.dtos.request.StudentRequest;
 import com.cohort22.dtos.response.StudentResponse;
 import com.cohort22.exceptions.AlreadyExistsException;
@@ -8,6 +9,7 @@ import com.cohort22.services.StudentServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/student")
@@ -18,12 +20,8 @@ public class StudentController {
 
     @PostMapping("/create-students")
     public ResponseEntity<StudentResponse> addNewStudent(@RequestBody StudentRequest studentRequest) {
-        try {
-            StudentResponse createdStudent = studentServices.addNewStudent(studentRequest);
-            return ResponseEntity.ok(createdStudent);
-        } catch (AlreadyExistsException e) {
-            throw new AlreadyExistsException("Username already exists");
-        }
+        StudentResponse createdStudent = studentServices.addNewStudent(studentRequest);
+        return ResponseEntity.ok(createdStudent);
     }
     @PostMapping("/login")
     public ResponseEntity<StudentResponse> login(@RequestBody StudentRequest userRequest) {
@@ -34,8 +32,8 @@ public class StudentController {
         return ResponseEntity.ok(studentServices.resetPassword(changePasswordRequest));
     }
     @PostMapping("/send-reset-email")
-    public ResponseEntity<String> sendStudentResetEmail(@RequestBody String email) {
-        studentServices.sendResetLink(email);
+    public ResponseEntity<String> sendStudentResetEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        studentServices.sendResetLink(resetPasswordRequest);
         return ResponseEntity.ok("Reset email sent successfully to student!");
     }
     @DeleteMapping("/delete-students")
