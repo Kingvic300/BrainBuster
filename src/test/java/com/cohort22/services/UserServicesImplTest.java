@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,12 +32,15 @@ class UserServicesImplTest {
     @Autowired
     private TeacherRepository teacherRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Test
     void testCreateUser() {
         UserRequest request = new UserRequest();
         request.setUsername("victor");
-        request.setPassword("passw");
+        request.setPassword(passwordEncoder.encode("passw"));
         request.setEmail("student@email.com");
 
         UserResponse response = userServices.createUser(request);
@@ -45,7 +49,26 @@ class UserServicesImplTest {
         assertEquals("User Created Successfully", response.getMessage());
         assertNotNull(response.getJwtToken());
     }
+    @Test
+    void login(){
+        UserRequest login = new UserRequest();
+        login.setUsername("victor");
+        login.setPassword(passwordEncoder.encode("password"));
+        login.setEmail("student@email.com");
 
+        userServices.createUser(login);
+
+        UserRequest request = new UserRequest();
+        request.setUsername("victor");
+        request.setPassword("password");
+        request.setEmail("student@email.com");
+
+        UserResponse response = userServices.loginUser(request);
+
+        assertNotNull(response);
+        assertEquals("login Successfully", response.getMessage());
+        assertNotNull(response.getJwtToken());
+    }
     @Test
     void testDeleteUserSuccess() {
         User user = new User();

@@ -24,6 +24,9 @@ public class ApplicationConfiguration {
 
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+
+
+
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
@@ -39,6 +42,7 @@ public class ApplicationConfiguration {
             return user;
         };
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -66,7 +70,7 @@ public class ApplicationConfiguration {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:301")
+                        .allowedOrigins("http://localhost:300")
                         .allowedMethods("POST","GET", "DELETE","OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

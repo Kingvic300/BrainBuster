@@ -10,6 +10,7 @@ import com.cohort22.exceptions.TeacherNotFoundException;
 import com.cohort22.exceptions.UserNotFoundException;
 import com.cohort22.mappers.TeacherMapper;
 import com.cohort22.utils.JwtUtil;
+import com.cohort22.utils.OTPGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,14 +60,13 @@ public class TeacherServicesImpl implements TeacherServices {
     }
     @Override
     public TeacherResponse resetPassword(ChangePasswordRequest changePasswordRequest) {
-        String email = jwtUtil.validateResetToken(changePasswordRequest.getToken());
-        Optional<Teacher> teacher = teacherRepository.findByEmail(email);
+        Optional<Teacher> teacher = teacherRepository.findByEmail(changePasswordRequest.getEmail());
         if (teacher.isEmpty()) {
             throw new TeacherNotFoundException("Student not found");
         }
         teacher.get().setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         teacherRepository.save(teacher.get());
-        return TeacherMapper.mapToTeacherResponse("Teacher Reset Password", changePasswordRequest.getToken());
+        return TeacherMapper.mapToTeacherResponse("Teacher Reset Password", changePasswordRequest.getOtp());
     }
     @Override
     public void sendResetLink(String email){
@@ -74,11 +74,9 @@ public class TeacherServicesImpl implements TeacherServices {
         if (teacher.isEmpty()) {
             throw new TeacherNotFoundException("Student not found");
         }
-        String token = jwtUtil.generateResetToken(email);
-        String restLink = "http://localhost:8080/teacher/reset-password";
-        String url = restLink + token;
+        String url = OTPGenerator.generateOtp();
         emailService.sendResetPasswordEmail(email, url);
-        TeacherMapper.mapToTeacherResponse("Teacher Reset Link Sent", token);
+        TeacherMapper.mapToTeacherResponse("Teacher Reset Link Sent", url);
     }
 
     @Override

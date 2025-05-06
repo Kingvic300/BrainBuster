@@ -76,7 +76,6 @@ public class GameServicesImpl implements GameServices {
     public GameResponse startGame(GameRequest gameRequest) {
         Optional<Game> game = getGameFromTeacher(gameRequest);
 
-
         if (game.get().getStudentIds().isEmpty()) {
             throw new StudentNotFoundException("No students found for this game");
         }
@@ -192,7 +191,7 @@ public class GameServicesImpl implements GameServices {
 
 
     private Game validateGamePin(GameRequest gameRequest) {
-        GamePin gamePin = findByGamePin(gameRequest);
+        GamePin gamePin = findByGamePinId(gameRequest);
 
         Game game = getGame(gamePin);
 
@@ -207,7 +206,7 @@ public class GameServicesImpl implements GameServices {
                 .orElseThrow(() -> new GameNotFoundException("Game not found for the given pin"));
     }
 
-    private GamePin findByGamePin(GameRequest gameRequest) {
+    private GamePin findByGamePinId(GameRequest gameRequest) {
         return gamePinRepository.findById(gameRequest.getGamePinId())
                 .orElseThrow(() -> new GamePinNotFoundException("Invalid game pin"));
     }

@@ -38,12 +38,11 @@ public class SecurityConfiguration {
                                 "/student/reset-password",
                                 "/student/send-reset-email",
                                 "/teacher/send-reset-email").permitAll()
-                        .anyRequest()
-                        .hasAnyRole("TEACHER", "STUDENT")
+                        .anyRequest().hasAnyRole("TEACHER", "STUDENT")
                 )
+                .authenticationProvider(authenticationProvider)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -1,17 +1,15 @@
 package com.cohort22.utils;
 
-import com.cohort22.dtos.response.PasswordResetResponse;
-import com.cohort22.mappers.PasswordResetMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +17,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-    @Value("${reset.jwt.secret}")
+    @Value("Lro7KxAF6IvxTbQqynMFdzqHCL1m55CvaZ/V2M2ulawETobWLXXHZp3P5nMC+wMf")
     private String SECRET_KEY;
 
     @Value("${reset.jwt.expiration}")
@@ -58,8 +56,13 @@ public class JwtUtil {
     }
 
     public <T> T extractClaims(String jwtToken, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(jwtToken);
-        return claimsResolver.apply(claims);
+        try {
+            final Claims claims = extractAllClaims(jwtToken);
+            return claimsResolver.apply(claims);
+        } catch (Exception e) {
+            System.out.println("Failed to extract claims: " + e.getMessage());
+            throw new RuntimeException("Invalid token: " + e.getMessage());
+        }
     }
     private Claims extractAllClaims(String jwtToken) {
         return Jwts
@@ -71,28 +74,7 @@ public class JwtUtil {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-    public String generateResetToken(String email) {
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    public String validateResetToken(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSignInKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getSubject();
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid or expired token");
-        }
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(decodedKey);
     }
 }

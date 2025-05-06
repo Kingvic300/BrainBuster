@@ -1,6 +1,7 @@
 package com.cohort22.controllers;
 
 import com.cohort22.dtos.request.ChangePasswordRequest;
+import com.cohort22.dtos.request.LoginRequest;
 import com.cohort22.dtos.request.ResetPasswordRequest;
 import com.cohort22.dtos.request.StudentRequest;
 import com.cohort22.dtos.response.StudentResponse;
@@ -24,7 +25,7 @@ public class StudentController {
         return ResponseEntity.ok(createdStudent);
     }
     @PostMapping("/login")
-    public ResponseEntity<StudentResponse> login(@RequestBody StudentRequest userRequest) {
+    public ResponseEntity<StudentResponse> login(@RequestBody LoginRequest userRequest) {
         return ResponseEntity.ok(studentServices.loginUser(userRequest));
     }
     @PostMapping("/reset-password")
@@ -32,9 +33,8 @@ public class StudentController {
         return ResponseEntity.ok(studentServices.resetPassword(changePasswordRequest));
     }
     @PostMapping("/send-reset-email")
-    public ResponseEntity<String> sendStudentResetEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
-        studentServices.sendResetLink(resetPasswordRequest);
-        return ResponseEntity.ok("Reset email sent successfully to student!");
+    public ResponseEntity<StudentResponse> sendStudentResetEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        return ResponseEntity.ok( studentServices.sendResetLink(resetPasswordRequest));
     }
     @DeleteMapping("/delete-students")
     public ResponseEntity<StudentResponse> deleteStudent(@RequestBody StudentRequest studentRequest) {

@@ -1,7 +1,7 @@
 package com.cohort22.services;
 
 import com.cohort22.exceptions.EmailNotSentException;
-import com.cohort22.utils.JwtUtil;
+import com.cohort22.utils.OTPGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ public class EmailServiceImpl implements EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
     private final JavaMailSender mailSender;
-    private final JwtUtil jwtUtil;
 
     @Override
     @Async
@@ -29,11 +28,11 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendResetPasswordEmail(String toEmail, String resetUrl) {
+    public void sendResetPasswordEmail(String toEmail, String otp) {
         String emailContent = "<p>Hello,</p>" +
-                "<p>Click the link below to reset your password:</p>" +
-                "<p><a href=\"" + resetUrl + "\">Reset Password</a></p>" +
-                "<p>This link will expire in 30 minutes.</p>";
+                "<p>Your OTP to reset your password:</p>" +
+                "<h2>" + otp + "</h2>" +
+                "<p>This OTP will expire in 30 minutes.</p>";
 
         sendMimeEmail(toEmail, "Reset Your Password", emailContent);
     }
@@ -52,7 +51,6 @@ public class EmailServiceImpl implements EmailService {
             LOGGER.info("Email sent to {}", to);
 
         } catch (MessagingException | MailException e) {
-            LOGGER.error("Failed to send email to {}: {}", to, e.getMessage());
             throw new EmailNotSentException("Failed to send email. Please try again later.");
         }
     }
