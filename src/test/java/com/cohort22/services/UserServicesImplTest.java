@@ -56,11 +56,12 @@ class UserServicesImplTest {
         login.setPassword(passwordEncoder.encode("password"));
         login.setEmail("student@email.com");
 
+
         userServices.createUser(login);
 
         UserRequest request = new UserRequest();
         request.setUsername("victor");
-        request.setPassword("password");
+        request.setPassword(login.getPassword());
         request.setEmail("student@email.com");
 
         UserResponse response = userServices.loginUser(request);
