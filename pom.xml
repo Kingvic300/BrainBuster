@@ -16,7 +16,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>24</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
