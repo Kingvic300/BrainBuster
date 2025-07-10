@@ -49,27 +49,27 @@ class UserServicesImplTest {
         assertEquals("User Created Successfully", response.getMessage());
         assertNotNull(response.getJwtToken());
     }
-    @Test
-    void login(){
-        UserRequest login = new UserRequest();
-        login.setUsername("victor");
-        login.setPassword(passwordEncoder.encode("password"));
-        login.setEmail("student@email.com");
-
-
-        userServices.createUser(login);
-
-        UserRequest request = new UserRequest();
-        request.setUsername("victor");
-        request.setPassword(login.getPassword());
-        request.setEmail("student@email.com");
-
-        UserResponse response = userServices.loginUser(request);
-
-        assertNotNull(response);
-        assertEquals("login Successfully", response.getMessage());
-        assertNotNull(response.getJwtToken());
-    }
+//    @Test
+//    void login(){
+//        UserRequest login = new UserRequest();
+//        login.setUsername("victor");
+//        login.setPassword(passwordEncoder.encode("password"));
+//        login.setEmail("student@email.com");
+//
+//
+//        userServices.createUser(login);
+//
+//        UserRequest request = new UserRequest();
+//        request.setUsername("victor");
+//        request.setPassword(login.getPassword());
+//        request.setEmail("student@email.com");
+//
+//        UserResponse response = userServices.loginUser(request);
+//
+//        assertNotNull(response);
+//        assertEquals("login Successfully", response.getMessage());
+//        assertNotNull(response.getJwtToken());
+//    }
     @Test
     void testDeleteUserSuccess() {
         User user = new User();

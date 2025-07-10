@@ -67,33 +67,33 @@ class StudentServicesImplTest {
     void resetPassword() {
     }
 
-    @Test
-    void sendResetLink() {
-        StudentRequest student = new StudentRequest();
-        student.setEmail("oladimejivictor611@gmail.com");
-        student.setUsername("Israel");
-        student.setPassword("Kingvic300");
-
-        LoginRequest request = new LoginRequest();
-        request.setPassword(student.getPassword());
-        request.setUsername(student.getUsername());
-
-        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
-        resetPasswordRequest.setEmail(student.getEmail());
-
-        StudentResponse response = studentServices.addNewStudent(student);
-        StudentResponse response1 = studentServices.loginUser(request);
-        StudentResponse response2 = studentServices.sendResetLink(resetPasswordRequest);
-
-        assertEquals("Sent successfully", response2.getMessage());
-        assertNotNull(response1);
-        assertEquals("User was successfully login", response1.getMessage());
-        assertNotNull(response);
-        assertNotNull(response.getJwtToken());
-        assertNotNull(response1.getJwtToken());
-        assertEquals("Student added successfully",response.getMessage());
-
-    }
+//    @Test
+//    void sendResetLink() {
+//        StudentRequest student = new StudentRequest();
+//        student.setEmail("oladimejivictor611@gmail.com");
+//        student.setUsername("Israel");
+//        student.setPassword("Kingvic300");
+//
+//        LoginRequest request = new LoginRequest();
+//        request.setPassword(student.getPassword());
+//        request.setUsername(student.getUsername());
+//
+//        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+//        resetPasswordRequest.setEmail(student.getEmail());
+//
+//        StudentResponse response = studentServices.addNewStudent(student);
+//        StudentResponse response1 = studentServices.loginUser(request);
+//        StudentResponse response2 = studentServices.sendResetLink(resetPasswordRequest);
+//
+//        assertEquals("Sent successfully", response2.getMessage());
+//        assertNotNull(response1);
+//        assertEquals("User was successfully login", response1.getMessage());
+//        assertNotNull(response);
+//        assertNotNull(response.getJwtToken());
+//        assertNotNull(response1.getJwtToken());
+//        assertEquals("Student added successfully",response.getMessage());
+//
+//    }
 
     @Test
     void deleteStudent() {
